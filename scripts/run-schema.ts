@@ -36,3 +36,4 @@ console.log("   📄 supabase-schema.sql")
 console.log("5. 'Run' butonuna tıklayın\n")
 console.log("✅ Şemalar oluşturulduktan sonra uygulama çalışacak!\n")
 
+
