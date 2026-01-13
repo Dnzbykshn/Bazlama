@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Skeleton } from "@/components/ui/skeleton"
+import { motion, type Variants, AnimatePresence } from "framer-motion"
 
 interface MenuItem {
   id: string
@@ -16,6 +17,22 @@ interface MenuItem {
   price: number
   image_url: string | null
   category: string | null
+}
+
+// Animation variants
+const fadeIn: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+}
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
 }
 
 export default function MenuPage() {
@@ -28,41 +45,22 @@ export default function MenuPage() {
     async function fetchMenuItems() {
       try {
         setLoading(true)
-        
+
         // If Supabase is not configured, use mock data directly
         if (!isSupabaseConfigured) {
           const mockData = [
-            {
-              id: "1",
-              title: "Serpme Kahvaltı",
-              description: "Tüm lezzetlerin bir arada olduğu zengin kahvaltı tabağı",
-              price: 250,
-              image_url: "/images/image.png",
-              category: "Kahvaltı",
-            },
-            {
-              id: "2",
-              title: "Menemen",
-              description: "Geleneksel tarifimizle hazırlanan özel menemen",
-              price: 85,
-              image_url: "/images/image.png",
-              category: "Sıcak Yemekler",
-            },
-            {
-              id: "3",
-              title: "Tereyağlı Bal",
-              description: "Organik tereyağı ve doğal balımız",
-              price: 95,
-              image_url: "/images/image.png",
-              category: "Kahvaltı",
-            },
+            { id: "1", title: "Serpme Kahvaltı", description: "Peynir çeşitleri, zeytinler, reçeller, bal-kaymak, yumurta ve sınırsız çay ile zenginleştirilmiş kahvaltı keyfi.", price: 450, image_url: "/images/image.png", category: "Kahvaltı" },
+            { id: "2", title: "Menemen", description: "Kızarmış ekmek ve taze malzemelerle hazırlanan, isteğe göre kaşarlı veya sucuklu seçenekleriyle.", price: 180, image_url: "/images/image.png", category: "Sıcaklar" },
+            { id: "3", title: "Mıhlama", description: "Karadeniz'in meşhur lezzeti; tereyağı, mısır unu ve özel peyniriyle uzayıp giden bir tat.", price: 200, image_url: "/images/image.png", category: "Sıcaklar" },
+            { id: "4", title: "Pişi Tabağı", description: "Anne eli değmiş gibi, yanında peynir ve domates ile servis edilen sıcacık pişiler.", price: 150, image_url: "/images/image.png", category: "Hamur İşi" },
+            { id: "5", title: "Gözleme", description: "İncecik açılmış hamur içerisinde mevsim yeşillikleri veya peynir seçenekleriyle.", price: 160, image_url: "/images/image.png", category: "Hamur İşi" },
+            { id: "6", title: "Türk Kahvesi", description: "Geleneksel sunumu ve yanında lokumu ile közde pişen Türk kahvesi.", price: 90, image_url: "/images/image.png", category: "İçecekler" },
           ]
-          
-          // Filter by category if selected
+
           const filtered = selectedCategory
             ? mockData.filter((item) => item.category === selectedCategory)
             : mockData
-          
+
           setItems(filtered)
           setError(null)
           setLoading(false)
@@ -83,33 +81,13 @@ export default function MenuPage() {
       } catch (err: any) {
         console.error("Error fetching menu items:", err)
         setError(err.message || "Menü yüklenirken bir hata oluştu")
-        // Only show mock data if Supabase is not configured
+
+        // Fallback mock data
         if (!isSupabaseConfigured) {
           const mockData = [
-            {
-              id: "1",
-              title: "Serpme Kahvaltı",
-              description: "Tüm lezzetlerin bir arada olduğu zengin kahvaltı tabağı",
-              price: 250,
-              image_url: "/images/image.png",
-              category: "Kahvaltı",
-            },
-            {
-              id: "2",
-              title: "Menemen",
-              description: "Geleneksel tarifimizle hazırlanan özel menemen",
-              price: 85,
-              image_url: "/images/image.png",
-              category: "Sıcak Yemekler",
-            },
-            {
-              id: "3",
-              title: "Tereyağlı Bal",
-              description: "Organik tereyağı ve doğal balımız",
-              price: 95,
-              image_url: "/images/image.png",
-              category: "Kahvaltı",
-            },
+            { id: "1", title: "Serpme Kahvaltı", description: "Peynir çeşitleri, zeytinler, reçeller, bal-kaymak, yumurta ve sınırsız çay ile zenginleştirilmiş kahvaltı keyfi.", price: 450, image_url: "/images/image.png", category: "Kahvaltı" },
+            { id: "2", title: "Menemen", description: "Kızarmış ekmek ve taze malzemelerle hazırlanan, isteğe göre kaşarlı veya sucuklu seçenekleriyle.", price: 180, image_url: "/images/image.png", category: "Sıcaklar" },
+            { id: "3", title: "Mıhlama", description: "Karadeniz'in meşhur lezzeti; tereyağı, mısır unu ve özel peyniriyle uzayıp giden bir tat.", price: 200, image_url: "/images/image.png", category: "Sıcaklar" },
           ]
           const filtered = selectedCategory
             ? mockData.filter((item) => item.category === selectedCategory)
@@ -118,6 +96,7 @@ export default function MenuPage() {
         } else {
           setItems([])
         }
+
       } finally {
         setLoading(false)
       }
@@ -126,42 +105,61 @@ export default function MenuPage() {
     fetchMenuItems()
   }, [selectedCategory])
 
-  const categories = Array.from(new Set(items.map((item) => item.category).filter(Boolean))) as string[]
+  // Mock categories for better visual if empty
+  const categories = ["Kahvaltı", "Sıcaklar", "Hamur İşi", "İçecekler"]
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-[#FDFBF7]">
       <Header />
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-serif font-bold mb-4">Menü</h1>
-          <p className="text-lg text-muted-foreground">Lezzetli seçeneklerimiz</p>
-        </div>
 
-        {categories.length > 0 && (
-          <div className="flex flex-wrap gap-2 justify-center mb-12">
+      {/* Hero Section */}
+      <section className="pt-32 pb-12 px-4">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+          className="container mx-auto text-center"
+        >
+          <span className="inline-block py-1 px-4 rounded-full bg-primary/10 text-primary text-sm font-medium tracking-wide mb-4">
+            Lezzetlerimiz
+          </span>
+          <h1 className="text-5xl font-serif font-bold mb-4 text-foreground">Menü</h1>
+          <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto">
+            Geleneksel lezzetler, özenli sunumlar ve unutulmaz tatlar.
+          </p>
+        </motion.div>
+      </section>
+
+      <div className="container mx-auto px-4 pb-24">
+        {/* Categories */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex flex-wrap gap-3 justify-center mb-16"
+        >
+          <Button
+            variant={selectedCategory === null ? "default" : "outline"}
+            onClick={() => setSelectedCategory(null)}
+            className={`rounded-full px-6 transition-all duration-300 ${selectedCategory === null ? 'shadow-lg shadow-primary/25 scale-105' : 'bg-white border-stone-200 hover:bg-stone-50'}`}
+          >
+            Tümü
+          </Button>
+          {categories.map((category) => (
             <Button
-              variant={selectedCategory === null ? "default" : "outline"}
-              onClick={() => setSelectedCategory(null)}
-              className="rounded-full"
+              key={category}
+              variant={selectedCategory === category ? "default" : "outline"}
+              onClick={() => setSelectedCategory(category)}
+              className={`rounded-full px-6 transition-all duration-300 ${selectedCategory === category ? 'shadow-lg shadow-primary/25 scale-105' : 'bg-white border-stone-200 hover:bg-stone-50'}`}
             >
-              Tümü
+              {category}
             </Button>
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                onClick={() => setSelectedCategory(category)}
-                className="rounded-full"
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-        )}
+          ))}
+        </motion.div>
 
         {error && (
-          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-8 text-center">
-            <p className="text-destructive">{error}</p>
+          <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-6 mb-12 text-center max-w-2xl mx-auto">
+            <p className="text-destructive font-medium">{error}</p>
             <p className="text-sm text-muted-foreground mt-2">
               Supabase bağlantısı yapılandırılmamış olabilir. Mock veriler gösteriliyor.
             </p>
@@ -169,61 +167,76 @@ export default function MenuPage() {
         )}
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(6)].map((_, i) => (
-              <Card key={i}>
-                <Skeleton className="w-full h-48" />
-                <CardHeader>
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-full mt-2" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-8 w-1/3" />
-                </CardContent>
-              </Card>
+              <div key={i} className="space-y-4">
+                <Skeleton className="w-full h-64 rounded-[2.5rem]" />
+                <Skeleton className="h-8 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+              </div>
             ))}
           </div>
         ) : items.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Henüz menü öğesi bulunmuyor.</p>
+          <div className="text-center py-24 bg-white rounded-[3rem] border border-stone-100">
+            <span className="text-4xl block mb-4">🍽️</span>
+            <p className="text-muted-foreground text-lg">Bu kategoride henüz ürün bulunmuyor.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {items.map((item) => (
-              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative w-full h-48 bg-secondary">
-                  {item.image_url ? (
-                    <Image
-                      src={item.image_url}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <span className="text-4xl">🍽️</span>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            <AnimatePresence mode="popLayout">
+              {items.map((item) => (
+                <motion.div
+                  key={item.id}
+                  layout
+                  variants={fadeIn}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  className="bg-white rounded-[2.5rem] p-4 shadow-xl shadow-stone-200/50 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 border border-stone-100 group"
+                >
+                  <div className="relative w-full h-64 rounded-[2rem] overflow-hidden mb-6 bg-secondary">
+                    {item.image_url ? (
+                      <Image
+                        src={item.image_url}
+                        alt={item.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-stone-100">
+                        <span className="text-4xl opacity-20">🍽️</span>
+                      </div>
+                    )}
+                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full font-bold text-primary shadow-lg">
+                      {item.price.toFixed(0)} ₺
                     </div>
-                  )}
-                </div>
-                <CardHeader>
-                  <CardTitle>{item.title}</CardTitle>
-                  {item.description && <CardDescription>{item.description}</CardDescription>}
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-primary">
-                      {item.price.toFixed(2)} ₺
-                    </span>
-                    <Button size="sm">Sipariş Ver</Button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+
+                  <div className="px-4 pb-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-2xl font-serif font-bold text-foreground">{item.title}</h3>
+                    </div>
+                    {item.description && (
+                      <p className="text-muted-foreground leading-relaxed text-sm mb-6 line-clamp-3">
+                        {item.description}
+                      </p>
+                    )}
+                    <Button className="w-full rounded-xl h-12 text-base font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all group-hover:translate-y-[-2px]">
+                      Sipariş Ver
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         )}
       </div>
       <Footer />
     </main>
   )
 }
-

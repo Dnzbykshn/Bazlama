@@ -8,9 +8,25 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { Mail, Phone, MapPin, Send } from "lucide-react"
+import { motion, type Variants } from "framer-motion"
+
+// Animation variants
+const fadeIn: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+}
+
+const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } }
+}
+
+const slideInRight: Variants = {
+  hidden: { opacity: 0, x: 50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } }
+}
 
 export default function IletisimPage() {
   const [formData, setFormData] = useState({
@@ -26,7 +42,6 @@ export default function IletisimPage() {
     setLoading(true)
 
     try {
-      // If Supabase is not configured, show success message anyway
       if (!isSupabaseConfigured) {
         toast({
           title: "Mesaj gönderildi!",
@@ -66,99 +81,108 @@ export default function IletisimPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-[#FDFBF7] overflow-hidden">
       <Header />
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-serif font-bold mb-4">İletişim</h1>
-          <p className="text-lg text-muted-foreground">Bizimle iletişime geçin</p>
-        </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+      {/* Header */}
+      <section className="pt-32 pb-12 px-4">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+          className="container mx-auto text-center"
+        >
+          <span className="inline-block py-1 px-4 rounded-full bg-primary/10 text-primary text-sm font-medium tracking-wide mb-4">
+            Bize Ulaşın
+          </span>
+          <h1 className="text-5xl font-serif font-bold mb-4 text-foreground">İletişim</h1>
+          <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto">
+            Sorularınız, rezervasyon talepleriniz veya sadece merhaba demek için buradayız.
+          </p>
+        </motion.div>
+      </section>
+
+      <div className="container mx-auto px-4 pb-24 max-w-6xl">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+
           {/* Contact Info */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>İletişim Bilgileri</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Adres</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Örnek Mahalle, Örnek Sokak No:1
-                      <br />
-                      İstanbul, Türkiye
-                    </p>
-                  </div>
-                </div>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={slideInLeft}
+            className="space-y-8"
+          >
+            {/* Info Cards */}
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100 space-y-8">
+              <h2 className="text-2xl font-serif font-bold mb-6">İletişim Bilgileri</h2>
 
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Telefon</h3>
-                    <a
-                      href="tel:+905551234567"
-                      className="text-muted-foreground text-sm hover:text-primary transition-colors"
-                    >
-                      +90 555 123 45 67
-                    </a>
-                  </div>
+              <div className="flex items-start gap-6 group">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <MapPin className="w-5 h-5 text-primary" />
                 </div>
+                <div>
+                  <h3 className="font-bold text-lg mb-1">Adres</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Örnek Mahalle, Örnek Sokak No:1
+                    <br />
+                    İstanbul, Türkiye
+                  </p>
+                </div>
+              </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">E-posta</h3>
-                    <a
-                      href="mailto:info@muzlum.com"
-                      className="text-muted-foreground text-sm hover:text-primary transition-colors"
-                    >
-                      info@muzlum.com
-                    </a>
-                  </div>
+              <div className="flex items-start gap-6 group">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <Phone className="w-5 h-5 text-primary" />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <h3 className="font-bold text-lg mb-1">Telefon</h3>
+                  <a href="tel:+905551234567" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                    +90 555 123 45 67
+                  </a>
+                </div>
+              </div>
 
-            {/* Google Maps */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Konum</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full h-64 bg-secondary rounded-lg overflow-hidden">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.5!2d28.9784!3d41.0082!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzI5LjUiTiAyOMKwNTgnNDIuMiJF!5e0!3m2!1str!2str!4v1234567890"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="w-full h-full"
-                  />
+              <div className="flex items-start gap-6 group">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <Mail className="w-5 h-5 text-primary" />
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div>
+                  <h3 className="font-bold text-lg mb-1">E-posta</h3>
+                  <a href="mailto:info@muzlum.com" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                    info@muzlum.com
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Map */}
+            <div className="h-80 w-full rounded-[2.5rem] overflow-hidden shadow-xl shadow-stone-200/50 border border-stone-100">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.5!2d28.9784!3d41.0082!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzI5LjUiTiAyOMKwNTgnNDIuMiJF!5e0!3m2!1str!2str!4v1234567890"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full grayscale hover:grayscale-0 transition-all duration-700"
+              />
+            </div>
+          </motion.div>
 
           {/* Contact Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Bize Yazın</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={slideInRight}
+          >
+            <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100">
+              <h2 className="text-2xl font-serif font-bold mb-2">Bize Yazın</h2>
+              <p className="text-muted-foreground mb-8">Size en kısa sürede dönüş yapacağız.</p>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name">İsim</Label>
+                  <Label htmlFor="name" className="text-base font-medium pl-1">İsim</Label>
                   <Input
                     id="name"
                     type="text"
@@ -166,11 +190,12 @@ export default function IletisimPage() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
+                    className="h-12 rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">E-posta</Label>
+                  <Label htmlFor="email" className="text-base font-medium pl-1">E-posta</Label>
                   <Input
                     id="email"
                     type="email"
@@ -178,11 +203,12 @@ export default function IletisimPage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
+                    className="h-12 rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message">Mesaj</Label>
+                  <Label htmlFor="message" className="text-base font-medium pl-1">Mesaj</Label>
                   <Textarea
                     id="message"
                     placeholder="Mesajınızı buraya yazın..."
@@ -190,29 +216,34 @@ export default function IletisimPage() {
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     rows={6}
                     required
+                    className="resize-none rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors p-4"
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="w-full h-12 rounded-xl text-lg font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
+                  disabled={loading}
+                >
                   {loading ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
                       Gönderiliyor...
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4 mr-2" />
+                      <Send className="w-5 h-5 mr-3" />
                       Gönder
                     </>
                   )}
                 </Button>
               </form>
-            </CardContent>
-          </Card>
+            </div>
+          </motion.div>
+
         </div>
       </div>
       <Footer />
     </main>
   )
 }
-

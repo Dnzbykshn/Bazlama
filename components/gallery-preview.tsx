@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
 
 interface GalleryItem {
   id: string
@@ -19,86 +20,78 @@ export function GalleryPreview() {
   useEffect(() => {
     async function fetchGallery() {
       try {
-        // If Supabase is not configured, use mock data directly
         if (!isSupabaseConfigured) {
           setImages([
-            { id: "1", image_url: "/images/image.png", title: "Kahvaltı Tabağı" },
+            { id: "1", image_url: "/images/image.png", title: "Kahvaltı" },
             { id: "2", image_url: "/images/image.png", title: "Mekan" },
-            { id: "3", image_url: "/images/image.png", title: "Lezzetler" },
+            { id: "3", image_url: "/images/image.png", title: "Detay" },
             { id: "4", image_url: "/images/image.png", title: "Atmosfer" },
           ])
           setLoading(false)
           return
         }
 
-        const { data, error } = await supabase
-          .from("gallery")
-          .select("*")
-          .limit(4)
-
-        if (error) throw error
+        const { data } = await supabase.from("gallery").select("*").limit(4)
         setImages(data || [])
       } catch (error) {
-        console.error("Error fetching gallery:", error)
-        // Only show mock data if Supabase is not configured
-        if (!isSupabaseConfigured) {
-          setImages([
-            { id: "1", image_url: "/images/image.png", title: "Kahvaltı Tabağı" },
-            { id: "2", image_url: "/images/image.png", title: "Mekan" },
-            { id: "3", image_url: "/images/image.png", title: "Lezzetler" },
-            { id: "4", image_url: "/images/image.png", title: "Atmosfer" },
-          ])
-        } else {
-          setImages([])
-        }
+        setImages([])
       } finally {
         setLoading(false)
       }
     }
-
     fetchGallery()
   }, [])
 
-  if (loading) {
-    return null
-  }
+  if (loading) return null
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-24 bg-[#FDFBF7]">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
           <h2 className="text-4xl font-serif font-bold mb-4">Galeri</h2>
-          <p className="text-muted-foreground">Mekanımızdan kareler</p>
-        </div>
+          <p className="text-muted-foreground text-lg">Mekanımızdan ve lezzetlerimizden kareler</p>
+        </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto h-[600px] md:h-[500px]">
           {images.map((item, index) => (
-            <div
+            <motion.div
               key={item.id}
-              className={`relative aspect-square overflow-hidden rounded-lg group cursor-pointer ${
-                index === 0 ? "md:col-span-2 md:row-span-2" : ""
-              }`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className={`relative overflow-hidden rounded-[2rem] group cursor-pointer shadow-lg ${index === 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1"
+                }`}
             >
               <Image
                 src={item.image_url}
                 alt={item.title || "Galeri görseli"}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                className="object-cover group-hover:scale-110 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <Link href="#galeri">
-            <Button variant="outline" size="lg" className="rounded-full">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mt-12"
+        >
+          <Link href="/galeri">
+            <Button variant="outline" size="lg" className="rounded-full px-8 h-12 border-2 hover:bg-stone-50">
               Tüm Galeriyi Gör
             </Button>
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
 }
-
