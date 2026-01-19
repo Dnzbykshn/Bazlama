@@ -35,7 +35,7 @@ export function HeroSection() {
           transition={{ duration: 1.5, ease: "easeOut" }}
           className="relative w-full h-full"
         >
-          <Image src="/images/image.png" alt="Turkish Breakfast Spread" fill className="object-cover opacity-90" priority />
+          <Image src="/hero.png" alt="Turkish Breakfast Spread" fill className="object-cover opacity-90" priority />
           {/* Overlay for better text visibility */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/10" />
         </motion.div>
