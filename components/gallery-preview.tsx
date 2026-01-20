@@ -31,7 +31,12 @@ export function GalleryPreview() {
           return
         }
 
-        const { data } = await supabase.from("gallery").select("*").limit(4)
+        const { data } = await supabase
+          .from("gallery")
+          .select("*")
+          .order("position", { ascending: true, nullsFirst: false })
+          .order("created_at", { ascending: false })
+          .limit(4)
         setImages(data || [])
       } catch (error) {
         setImages([])

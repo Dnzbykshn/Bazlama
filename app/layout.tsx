@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { playfairDisplay, poppins } from "@/lib/fonts"
 import { Toaster } from "@/components/ui/toaster"
+import { AuthProvider } from "@/components/auth-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -63,7 +64,9 @@ export default function RootLayout({
   return (
     <html lang="tr" className={`${playfairDisplay.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body className={`${poppins.className} antialiased`} suppressHydrationWarning>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <Toaster />
         <Analytics />
       </body>

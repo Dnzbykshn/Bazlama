@@ -114,8 +114,7 @@ export function FeaturedMenu() {
 
                 <div className="px-2 pb-2 text-center">
                   <h3 className="text-2xl font-serif font-bold text-foreground mb-2">{item.title}</h3>
-                  {item.description && <p className="text-muted-foreground text-sm mb-6 line-clamp-2">{item.description}</p>}
-                  <Button className="w-full rounded-xl h-12 text-base font-medium">Sipariş Ver</Button>
+                  {item.description && <p className="text-muted-foreground text-sm line-clamp-2">{item.description}</p>}
                 </div>
               </motion.div>
             ))}
