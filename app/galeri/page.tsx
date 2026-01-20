@@ -120,24 +120,6 @@ export default function GaleriPage() {
 
   return (
     <main className="min-h-screen relative">
-      {/* Natural Background Pattern */}
-      <div className="fixed inset-0 z-0 bg-[#FDFBF7]">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-stone-100/60 via-amber-50/40 to-green-50/50" />
-        {/* Subtle texture pattern */}
-        <div 
-          className="absolute inset-0 opacity-[0.08]"
-          style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, rgb(139 69 19) 1px, transparent 0)`,
-            backgroundSize: '50px 50px'
-          }}
-        />
-        {/* Organic shapes - more visible */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-green-100/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-amber-100/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-stone-100/15 rounded-full blur-3xl" />
-      </div>
-      
       <div className="relative z-10">
         <Header />
 

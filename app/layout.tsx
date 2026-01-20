@@ -8,32 +8,32 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: {
-    default: "Muzlum - Geleneksel Türk Kahvaltısı",
-    template: "%s | Muzlum",
+    default: "Pişi Kahvaltı - Geleneksel Türk Kahvaltısı",
+    template: "%s | Pişi Kahvaltı",
   },
-  description: "Geleneksel Türk kahvaltısının en lezzetli hali. Doymadan kaçmak yasak! Taze hazırlanan ürünlerimiz ve sıcak atmosferimizle sizleri ağırlıyoruz.",
+  description: "Geleneksel Türk kahvaltısının en lezzetli hali. Siz tamam diyene kadar, biz servise devam ediyoruz ;) Taze hazırlanan ürünlerimiz ve sıcak atmosferimizle sizleri ağırlıyoruz.",
   keywords: ["Türk kahvaltısı", "geleneksel kahvaltı", "İstanbul kahvaltı", "serpme kahvaltı", "organik kahvaltı"],
-  authors: [{ name: "Muzlum" }],
-  creator: "Muzlum",
+  authors: [{ name: "Pişi Kahvaltı" }],
+  creator: "Pişi Kahvaltı",
   openGraph: {
     type: "website",
     locale: "tr_TR",
-    url: "https://muzlum.com",
-    siteName: "Muzlum",
-    title: "Muzlum - Geleneksel Türk Kahvaltısı",
-    description: "Geleneksel Türk kahvaltısının en lezzetli hali. Doymadan kaçmak yasak!",
+    url: "https://pisikahvalti.com",
+    siteName: "Pişi Kahvaltı",
+    title: "Pişi Kahvaltı - Geleneksel Türk Kahvaltısı",
+    description: "Geleneksel Türk kahvaltısının en lezzetli hali. Siz tamam diyene kadar, biz servise devam ediyoruz ;)",
     images: [
       {
         url: "/images/image.png",
         width: 1200,
         height: 630,
-        alt: "Muzlum - Geleneksel Türk Kahvaltısı",
+        alt: "Pişi Kahvaltı - Geleneksel Türk Kahvaltısı",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Muzlum - Geleneksel Türk Kahvaltısı",
+    title: "Pişi Kahvaltı - Geleneksel Türk Kahvaltısı",
     description: "Geleneksel Türk kahvaltısının en lezzetli hali",
     images: ["/images/image.png"],
   },

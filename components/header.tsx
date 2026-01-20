@@ -1,10 +1,15 @@
 "use client"
 
-import { Search, ChevronDown, Menu } from "lucide-react"
+import { ChevronDown, Menu, MessageCircle } from "lucide-react"
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
@@ -13,7 +18,7 @@ const navLinks = [
   { href: "/", label: "Anasayfa" },
   { href: "/menu", label: "Menü" },
   { href: "/galeri", label: "Galeri" },
-  { href: "/bizi-taniyin", label: "Bizi Tanıyın" },
+  { href: "/subeler", label: "Şubeler" },
   { href: "/iletisim", label: "İletişim" },
 ]
 
@@ -42,21 +47,27 @@ export function Header() {
         flex items-center justify-between 
         w-full max-w-6xl 
         h-[4.5rem] px-4 sm:px-6 
-        bg-white/70 backdrop-blur-xl 
-        shadow-lg shadow-black/5 
-        border border-white/20
+        bg-teal-50/90 backdrop-blur-xl 
+        shadow-lg shadow-teal-900/10 
+        border border-teal-200/50
         rounded-full 
         transition-all duration-300
-        ${scrolled ? 'bg-white/80 shadow-xl' : ''}
+        ${scrolled ? 'bg-teal-50/95 shadow-xl shadow-teal-900/15' : ''}
       `}>
         {/* Left Section: Logo */}
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-all duration-300 group">
-          <div className="relative w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center p-2 group-hover:scale-110 transition-transform">
-            {/* Placeholder Logo Logic */}
-            <div className="font-serif font-bold text-primary text-xl">M</div>
+          <div className="relative w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center p-2 group-hover:scale-110 transition-transform overflow-hidden">
+            <Image
+              src="/pisikahvalti-logo.png"
+              alt="Pişi Kahvaltı Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+              priority
+            />
           </div>
           <span className="text-xl font-serif font-bold text-foreground hidden sm:block tracking-wide">
-            Muzlum
+            Pişi Kahvaltı
           </span>
         </Link>
 
@@ -66,38 +77,66 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-stone-600 hover:text-primary px-5 py-2.5 rounded-full hover:bg-white transition-all duration-300 hover:shadow-sm"
+              className="text-sm font-medium text-teal-800 hover:text-teal-600 px-5 py-2.5 rounded-full hover:bg-teal-100/80 transition-all duration-300 hover:shadow-sm"
             >
               {link.label}
             </Link>
           ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="text-sm font-medium text-teal-800 hover:text-teal-600 px-5 py-2.5 rounded-full hover:bg-teal-100/80 transition-all duration-300 hover:shadow-sm flex items-center gap-1">
+                Bizi Tanıyın
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link href="/bizi-taniyin" className="cursor-pointer">
+                  Bizi Tanıyın
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/bizi-taniyin/franchise" className="cursor-pointer">
+                  Franchise Başvuru
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         {/* Right Section: Actions */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="rounded-full hover:bg-stone-100 hidden sm:flex">
-            <Search className="w-5 h-5 text-stone-500" />
-          </Button>
-
-          <Button variant="ghost" size="sm" className="font-medium rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 px-4 hidden sm:flex">
-            {"TR"}
-            <ChevronDown className="w-4 h-4 ml-1" />
-          </Button>
+          {/* WhatsApp Button */}
+          <Link
+            href="https://wa.me/905402714040"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-[#25D366] hover:bg-[#20BA5A] text-white font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-[#25D366]/30"
+          >
+            <MessageCircle className="w-4 h-4" fill="white" />
+            WhatsApp
+          </Link>
 
           {/* Mobile Menu Trigger */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden rounded-full hover:bg-stone-100">
-                <Menu className="w-6 h-6 text-stone-700" />
+              <Button variant="ghost" size="icon" className="lg:hidden rounded-full hover:bg-teal-100/80">
+                <Menu className="w-6 h-6 text-teal-800" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] border-l border-white/20 bg-white/90 backdrop-blur-xl rounded-l-[2rem]">
+            <SheetContent side="right" className="w-[300px] border-l border-teal-200/50 bg-teal-50/95 backdrop-blur-xl rounded-l-[2rem]">
               <div className="flex flex-col gap-8 mt-12 px-2">
-                <div className="flex items-center gap-3 pb-6 border-b border-stone-100">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                    <span className="font-serif font-bold text-primary text-2xl">M</span>
+                <div className="flex items-center gap-3 pb-6 border-b border-teal-200/50">
+                  <div className="relative w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden">
+                    <Image
+                      src="/pisikahvalti-logo.png"
+                      alt="Pişi Kahvaltı Logo"
+                      width={48}
+                      height={48}
+                      className="object-contain"
+                    />
                   </div>
-                  <span className="text-2xl font-serif font-bold">Muzlum</span>
+                  <span className="text-2xl font-serif font-bold">Pişi Kahvaltı</span>
                 </div>
                 <nav className="flex flex-col gap-2">
                   {navLinks.map((link) => (
@@ -105,11 +144,35 @@ export function Header() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all"
+                      className="text-lg font-medium text-teal-800 hover:text-teal-600 hover:bg-teal-100/80 px-4 py-3 rounded-2xl transition-all"
                     >
                       {link.label}
                     </Link>
                   ))}
+                  <Link
+                    href="/bizi-taniyin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all"
+                  >
+                    Bizi Tanıyın
+                  </Link>
+                  <Link
+                    href="/bizi-taniyin/franchise"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all pl-8"
+                  >
+                    Franchise Başvuru
+                  </Link>
+                  <Link
+                    href="https://wa.me/905402714040"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 text-lg font-medium text-white bg-[#25D366] hover:bg-[#20BA5A] px-4 py-3 rounded-2xl transition-all mt-2"
+                  >
+                    <MessageCircle className="w-5 h-5" fill="white" />
+                    WhatsApp
+                  </Link>
                 </nav>
               </div>
             </SheetContent>

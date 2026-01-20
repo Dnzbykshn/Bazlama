@@ -96,7 +96,7 @@ export function HeroSection() {
           transition={{ delay: 0.8 }}
           className="absolute bottom-12 left-8 bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-xl max-w-xs hover:scale-105 transition-transform duration-300"
         >
-          <p className="text-base font-serif font-semibold text-foreground leading-tight">"Doymadan Kaçmak Yasak"</p>
+          <p className="text-base font-serif font-semibold text-foreground leading-tight">Siz tamam diyene kadar, biz servise devam ediyoruz ;)</p>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">Geleneksel Türk kahvaltısının en lezzetli halini modern dokunuşlarla sunuyoruz.</p>
         </motion.div>
 

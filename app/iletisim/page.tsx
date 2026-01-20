@@ -81,7 +81,7 @@ export default function IletisimPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FDFBF7] overflow-hidden">
+    <main className="min-h-screen overflow-hidden">
       <Header />
 
       {/* Header */}
@@ -123,9 +123,9 @@ export default function IletisimPage() {
                 <div>
                   <h3 className="font-bold text-lg mb-1">Adres</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Örnek Mahalle, Örnek Sokak No:1
+                    Kızılırmak mah. Vatan cad. 16 D
                     <br />
-                    İstanbul, Türkiye
+                    Sivas / 58070
                   </p>
                 </div>
               </div>
@@ -136,8 +136,8 @@ export default function IletisimPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg mb-1">Telefon</h3>
-                  <a href="tel:+905551234567" className="text-muted-foreground hover:text-primary transition-colors text-lg">
-                    +90 555 123 45 67
+                  <a href="tel:+905402714040" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                    +90 540 271 40 40
                   </a>
                 </div>
               </div>
@@ -148,8 +148,8 @@ export default function IletisimPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg mb-1">E-posta</h3>
-                  <a href="mailto:info@muzlum.com" className="text-muted-foreground hover:text-primary transition-colors text-lg">
-                    info@muzlum.com
+                  <a href="mailto:info@pisikahvalti.com" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                    info@pisikahvalti.com
                   </a>
                 </div>
               </div>

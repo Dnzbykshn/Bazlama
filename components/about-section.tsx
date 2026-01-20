@@ -24,7 +24,7 @@ export function AboutSection() {
 
           <div className="space-y-6 text-lg text-muted-foreground font-light leading-relaxed">
             <p>
-              Muzlum olarak, geleneksel Türk kahvaltısının en özel halini sizlere sunuyoruz.
+              Pişi Kahvaltı olarak, geleneksel Türk kahvaltısının en özel halini sizlere sunuyoruz.
               Her sabah taze hazırlanan ürünlerimiz, annelerimizin elinden çıkmış gibi sıcacık sofralarınızda yerini alıyor.
             </p>
             <p>
@@ -34,7 +34,7 @@ export function AboutSection() {
           </div>
 
           <div className="pt-4">
-            <p className="font-serif text-2xl font-bold text-primary">"Doymadan Kaçmak Yasak"</p>
+            <p className="font-serif text-2xl font-bold text-primary">Siz tamam diyene kadar, biz servise devam ediyoruz ;)</p>
           </div>
         </motion.div>
       </div>

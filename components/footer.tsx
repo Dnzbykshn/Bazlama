@@ -23,16 +23,19 @@ export function Footer() {
           {/* Logo & Description */}
           <div className="space-y-6">
             <Link href="/" className="flex items-center gap-3">
-              <div className="relative w-12 h-12 bg-white/10 rounded-xl p-2">
-                {/* Placeholder generic logo representation if image fails */}
-                <div className="w-full h-full flex items-center justify-center text-white font-serif font-bold text-xl">
-                  M
-                </div>
+              <div className="relative w-12 h-12 bg-white/10 rounded-xl p-2 overflow-hidden">
+                <Image
+                  src="/pisikahvalti-logo.png"
+                  alt="Pişi Kahvaltı Logo"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                />
               </div>
-              <span className="text-2xl font-serif font-bold tracking-wide">Muzlum</span>
+              <span className="text-2xl font-serif font-bold tracking-wide">Pişi Kahvaltı</span>
             </Link>
             <p className="text-stone-400 leading-relaxed font-light">
-              Geleneksel Türk kahvaltısının en lezzetli hali. Doymadan kaçmak yasak!
+              Geleneksel Türk kahvaltısının en lezzetli hali. Siz tamam diyene kadar, biz servise devam ediyoruz ;)
             </p>
           </div>
 
@@ -44,6 +47,7 @@ export function Footer() {
                 { name: 'Anasayfa', href: '/' },
                 { name: 'Menü', href: '/menu' },
                 { name: 'Galeri', href: '/galeri' },
+                { name: 'Şubeler', href: '/subeler' },
                 { name: 'Bizi Tanıyın', href: '/bizi-taniyin' },
                 { name: 'İletişim', href: '/iletisim' }
               ].map((link) => (
@@ -66,22 +70,22 @@ export function Footer() {
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0 mt-[-4px]">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <span className="leading-relaxed">Örnek Mahalle, Örnek Sokak No:1<br />İstanbul, Türkiye</span>
+                <span className="leading-relaxed">Kızılırmak mah. Vatan cad. 16 D<br />Sivas / 58070</span>
               </div>
               <div className="flex items-center gap-4 group cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
                   <Phone className="w-5 h-5 group-hover:text-white" />
                 </div>
-                <a href="tel:+905551234567" className="group-hover:text-white transition-colors">
-                  +90 555 123 45 67
+                <a href="tel:+905402714040" className="group-hover:text-white transition-colors">
+                  +90 540 271 40 40
                 </a>
               </div>
               <div className="flex items-center gap-4 group cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
                   <Mail className="w-5 h-5 group-hover:text-white" />
                 </div>
-                <a href="mailto:info@muzlum.com" className="group-hover:text-white transition-colors">
-                  info@muzlum.com
+                <a href="mailto:info@pisikahvalti.com" className="group-hover:text-white transition-colors">
+                  info@pisikahvalti.com
                 </a>
               </div>
             </div>
@@ -113,7 +117,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-stone-500">
-          <p>© {new Date().getFullYear()} Muzlum. Tüm hakları saklıdır.</p>
+          <p>© {new Date().getFullYear()} Pişi Kahvaltı. Tüm hakları saklıdır.</p>
           <button
             onClick={scrollToTop}
             className="flex items-center gap-2 hover:text-white transition-colors"
