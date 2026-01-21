@@ -59,7 +59,7 @@ export function GalleryPreview() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl font-serif font-bold mb-4">Galeri</h2>
-          <p className="text-muted-foreground text-lg">Mekanımızdan ve lezzetlerimizden kareler</p>
+          <p className="text-muted-foreground text-lg italic">Mekanımızdan ve lezzetlerimizden kareler</p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto h-[600px] md:h-[500px]">

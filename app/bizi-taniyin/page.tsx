@@ -131,7 +131,7 @@ export default function BiziTaniyinPage() {
   const content = aboutPage || defaultValues
 
   return (
-    <main className="min-h-screen overflow-hidden">
+    <main className="min-h-screen overflow-hidden bg-white">
       <Header />
 
       {/* Hero Section */}
@@ -149,7 +149,7 @@ export default function BiziTaniyinPage() {
             <h1 className="text-5xl md:text-7xl font-serif font-bold text-foreground">
               {content.hero_title}
             </h1>
-            <p className="text-xl text-muted-foreground leading-relaxed font-light">
+            <p className="text-xl text-muted-foreground leading-relaxed font-light italic">
               {content.hero_description}
             </p>
           </motion.div>
@@ -184,7 +184,7 @@ export default function BiziTaniyinPage() {
                 content.story_title
               )}
             </h2>
-            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed font-light">
+            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed font-light italic">
               <p>{content.story_content_paragraph1}</p>
               <p>{content.story_content_paragraph2}</p>
             </div>
@@ -201,7 +201,7 @@ export default function BiziTaniyinPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-serif font-bold mb-4">{content.values_title}</h2>
-            <p className="text-muted-foreground">{content.values_subtitle}</p>
+            <p className="text-muted-foreground italic">{content.values_subtitle}</p>
           </motion.div>
 
           <motion.div
@@ -234,7 +234,7 @@ export default function BiziTaniyinPage() {
                   {index + 1}
                 </div>
                 <h3 className="text-2xl font-serif font-bold mb-3">{item.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed italic">
                   {item.desc}
                 </p>
               </motion.div>
@@ -254,10 +254,10 @@ export default function BiziTaniyinPage() {
 
           <motion.div variants={slideInLeft} className="space-y-6 relative z-10">
             <h2 className="text-4xl font-serif font-bold text-white">{content.mission_title}</h2>
-            <p className="text-lg text-stone-300 leading-relaxed font-light">
+            <p className="text-lg text-stone-300 leading-relaxed font-light italic">
               {content.mission_content_paragraph1}
             </p>
-            <p className="text-lg text-stone-300 leading-relaxed font-light">
+            <p className="text-lg text-stone-300 leading-relaxed font-light italic">
               {content.mission_content_paragraph2}
             </p>
           </motion.div>
@@ -299,7 +299,7 @@ export default function BiziTaniyinPage() {
                 content.vision_title
               )}
             </h2>
-            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed font-light">
+            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed font-light italic">
               <p>{content.vision_content_paragraph1}</p>
               <p>{content.vision_content_paragraph2}</p>
             </div>
@@ -315,7 +315,7 @@ export default function BiziTaniyinPage() {
           className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-[3rem] p-8 md:p-16 text-center space-y-6"
         >
           <h2 className="text-4xl md:text-5xl font-serif font-bold">{content.franchise_title}</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto italic">
             {content.franchise_description}
           </p>
           <Link href="/bizi-taniyin/franchise">

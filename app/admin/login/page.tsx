@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <main className="min-h-screen flex items-center justify-center p-4 bg-white">
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="text-center mb-8">

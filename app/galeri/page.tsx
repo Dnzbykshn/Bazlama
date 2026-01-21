@@ -119,7 +119,7 @@ export default function GaleriPage() {
 
 
   return (
-    <main className="min-h-screen relative">
+    <main className="min-h-screen relative bg-white">
       <div className="relative z-10">
         <Header />
 
@@ -135,7 +135,7 @@ export default function GaleriPage() {
             Fotoğraflar
           </span>
           <h1 className="text-5xl font-serif font-bold mb-4 text-foreground">Galeri</h1>
-          <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground font-light italic max-w-2xl mx-auto">
             Mutfağımızdan çıkan lezzetler ve mekanımızdan keyifli kareler.
           </p>
         </motion.div>
@@ -145,7 +145,7 @@ export default function GaleriPage() {
         {error && (
           <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-6 mb-12 text-center max-w-2xl mx-auto">
             <p className="text-destructive font-medium">{error}</p>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground mt-2 italic">
               Supabase bağlantısı yapılandırılmamış olabilir. Mock veriler gösteriliyor.
             </p>
           </div>
@@ -163,7 +163,7 @@ export default function GaleriPage() {
             animate={{ opacity: 1 }}
             className="text-center py-24 bg-white rounded-[3rem] shadow-sm border border-stone-100"
           >
-            <p className="text-muted-foreground text-lg">Henüz galeri görseli bulunmuyor.</p>
+            <p className="text-muted-foreground text-lg italic">Henüz galeri görseli bulunmuyor.</p>
           </motion.div>
         ) : (
           <motion.div

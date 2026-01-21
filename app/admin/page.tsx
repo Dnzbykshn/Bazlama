@@ -786,7 +786,7 @@ export default function AdminPage() {
 
   return (
     <ProtectedRoute>
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+      <main className="min-h-screen bg-white">
         {/* Modern Header */}
         <div className="bg-white border-b border-slate-200 shadow-sm">
           <div className="container mx-auto px-4 py-6">

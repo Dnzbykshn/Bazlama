@@ -81,7 +81,7 @@ export default function IletisimPage() {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden">
+    <main className="min-h-screen overflow-hidden bg-white">
       <Header />
 
       {/* Header */}
@@ -96,7 +96,7 @@ export default function IletisimPage() {
             Bize Ulaşın
           </span>
           <h1 className="text-5xl font-serif font-bold mb-4 text-foreground">İletişim</h1>
-          <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground font-light italic max-w-2xl mx-auto">
             Sorularınız, rezervasyon talepleriniz veya sadece merhaba demek için buradayız.
           </p>
         </motion.div>
@@ -122,7 +122,7 @@ export default function IletisimPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg mb-1">Adres</h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed italic">
                     Kızılırmak mah. Vatan cad. 16 D
                     <br />
                     Sivas / 58070
@@ -178,7 +178,7 @@ export default function IletisimPage() {
           >
             <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100">
               <h2 className="text-2xl font-serif font-bold mb-2">Bize Yazın</h2>
-              <p className="text-muted-foreground mb-8">Size en kısa sürede dönüş yapacağız.</p>
+              <p className="text-muted-foreground mb-8 italic">Size en kısa sürede dönüş yapacağız.</p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">

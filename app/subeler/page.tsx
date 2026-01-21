@@ -88,7 +88,7 @@ export default function SubelerPage() {
   }
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white">
       <Header />
 
       {/* Hero Section */}
@@ -106,7 +106,7 @@ export default function SubelerPage() {
             <h1 className="text-5xl md:text-7xl font-serif font-bold text-foreground">
               Şubelerimiz
             </h1>
-            <p className="text-xl text-muted-foreground leading-relaxed font-light">
+            <p className="text-xl text-muted-foreground leading-relaxed font-light italic">
               Türkiye'nin dört bir yanında sizlerle buluşuyoruz. En yakın şubemizi keşfedin.
             </p>
           </motion.div>
@@ -117,13 +117,13 @@ export default function SubelerPage() {
       <section className="container mx-auto px-4 pb-24">
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Yükleniyor...</p>
+            <p className="text-muted-foreground italic">Yükleniyor...</p>
           </div>
         ) : branches.length === 0 ? (
           <Card className="max-w-2xl mx-auto">
             <CardContent className="py-12 text-center">
               <MapPin className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">Henüz şube eklenmemiş.</p>
+              <p className="text-muted-foreground italic">Henüz şube eklenmemiş.</p>
             </CardContent>
           </Card>
         ) : (
@@ -131,54 +131,55 @@ export default function SubelerPage() {
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
           >
             {branches.map((branch) => {
               const todayHours = getTodayWorkingHours(branch.working_hours)
               return (
-                <motion.div key={branch.id} variants={fadeIn}>
-                  <Card className="overflow-hidden rounded-[2rem] shadow-xl shadow-stone-200/50 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 border border-stone-100 h-full flex flex-col group">
+                <motion.div key={branch.id} variants={fadeIn} className="group/card">
+                  <Card className="overflow-hidden rounded-3xl shadow-xl shadow-stone-200/60 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 border-2 border-stone-300/60 hover:border-primary/40 h-full flex flex-col group bg-white ring-1 ring-stone-100/50 hover:ring-primary/20 hover:scale-[1.02]">
                     {branch.image_url && (
-                      <div className="relative aspect-video w-full overflow-hidden">
+                      <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
                         <Image
                           src={branch.image_url}
                           alt={branch.name}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-700"
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       </div>
                     )}
                     <CardContent className="p-6 flex flex-col flex-1">
-                      <div className="mb-4">
-                        <h3 className="text-2xl font-serif font-bold mb-2">{branch.name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                          <MapPin className="w-4 h-4" />
-                          <span>{branch.city}</span>
+                      <div className="mb-5">
+                        <h3 className="text-2xl md:text-3xl font-serif font-bold mb-2 text-slate-900">{branch.name}</h3>
+                        <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
+                          <MapPin className="w-4 h-4 text-primary" />
+                          <span className="font-medium">{branch.city}</span>
                         </div>
                         {branch.description && (
-                          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2 mb-4">
+                          <p className="text-slate-600 text-sm leading-relaxed line-clamp-2 mb-5 italic">
                             {branch.description}
                           </p>
                         )}
                       </div>
 
-                      <div className="space-y-2 mb-4 flex-1">
+                      <div className="space-y-3 mb-5 flex-1">
                         {branch.address && (
-                          <div className="flex items-start gap-2 text-sm">
-                            <MapPin className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                            <span className="text-muted-foreground line-clamp-2">{branch.address}</span>
+                          <div className="flex items-start gap-3 text-sm bg-slate-50/50 rounded-lg p-3">
+                            <MapPin className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                            <span className="text-slate-700 line-clamp-2 italic leading-relaxed">{branch.address}</span>
                           </div>
                         )}
                         {todayHours && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                            <span className="text-muted-foreground">Bugün: {todayHours}</span>
+                          <div className="flex items-center gap-3 text-sm bg-slate-50/50 rounded-lg p-3">
+                            <Clock className="w-4 h-4 text-primary flex-shrink-0" />
+                            <span className="text-slate-700 italic">Bugün: <span className="font-semibold not-italic">{todayHours}</span></span>
                           </div>
                         )}
                         {branch.phone && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                            <a href={`tel:${branch.phone}`} className="text-muted-foreground hover:text-primary transition-colors">
+                          <div className="flex items-center gap-3 text-sm bg-slate-50/50 rounded-lg p-3">
+                            <Phone className="w-4 h-4 text-primary flex-shrink-0" />
+                            <a href={`tel:${branch.phone}`} className="text-slate-700 hover:text-primary transition-colors font-medium">
                               {branch.phone}
                             </a>
                           </div>
@@ -186,7 +187,7 @@ export default function SubelerPage() {
                       </div>
 
                       <Link href={`/subeler/${branch.slug}`}>
-                        <Button variant="outline" className="w-full group mt-auto">
+                        <Button variant="outline" className="w-full group mt-auto border-2 hover:border-primary hover:bg-primary hover:text-white transition-all duration-300">
                           Detayları Gör
                           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </Button>

@@ -22,7 +22,7 @@ export function AboutSection() {
             <span className="italic text-primary">Modern Dokunuş</span>
           </h2>
 
-          <div className="space-y-6 text-lg text-muted-foreground font-light leading-relaxed">
+          <div className="space-y-6 text-lg text-muted-foreground font-light leading-relaxed italic">
             <p>
               Pişi Kahvaltı olarak, geleneksel Türk kahvaltısının en özel halini sizlere sunuyoruz.
               Her sabah taze hazırlanan ürünlerimiz, annelerimizin elinden çıkmış gibi sıcacık sofralarınızda yerini alıyor.

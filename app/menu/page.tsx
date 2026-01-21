@@ -99,7 +99,7 @@ export default function MenuPage() {
   }, [])
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white">
       <Header />
 
       {/* Hero Section */}
@@ -114,7 +114,7 @@ export default function MenuPage() {
             Lezzetlerimiz
           </span>
           <h1 className="text-5xl font-serif font-bold mb-4 text-foreground">Menü</h1>
-          <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground font-light italic max-w-2xl mx-auto">
             Geleneksel lezzetler, özenli sunumlar ve unutulmaz tatlar.
           </p>
         </motion.div>
@@ -137,41 +137,32 @@ export default function MenuPage() {
               initial="hidden"
               animate="visible"
               variants={fadeIn}
-              className="max-w-3xl mx-auto mb-12"
+              className="max-w-2xl mx-auto mb-12"
             >
-              <div className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 rounded-2xl p-6 md:p-8 shadow-xl border border-primary/20">
-                {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
+              <div className="text-center space-y-6">
+                {/* Main Title */}
+                <h2 className="text-5xl md:text-6xl font-serif font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent mb-3 tracking-tight">
+                  {menu.title}
+                </h2>
                 
-                <div className="relative z-10 text-center">
-                  {/* Badge */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full mb-4 shadow-sm">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                    <span className="text-[10px] font-medium text-slate-700 uppercase tracking-wider">Sınırsız</span>
-                  </div>
-                  
-                  {/* Title */}
-                  <h2 className="text-3xl md:text-4xl font-serif font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent mb-3">
-                    {menu.title}
-                  </h2>
-                  
-                  {/* Description */}
-                  {menu.description && (
-                    <p className="text-sm md:text-base text-slate-600 mb-6 max-w-xl mx-auto leading-relaxed">
-                      {menu.description}
-                    </p>
-                  )}
-                  
-                  {/* Price */}
-                  <div className="inline-flex flex-col items-center gap-1.5 bg-white/90 backdrop-blur-sm px-6 md:px-8 py-4 rounded-xl shadow-lg border border-white/50">
-                    <div className="flex items-baseline gap-2">
+                {/* Description */}
+                {menu.description && (
+                  <p className="text-lg md:text-xl text-slate-600 mb-8 leading-relaxed italic max-w-xl mx-auto">
+                    {menu.description}
+                  </p>
+                )}
+                
+                {/* Price with underline */}
+                <div className="inline-block">
+                  <div className="relative">
+                    <div className="flex items-baseline justify-center gap-2">
                       <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                         {menu.price.toFixed(2)}
                       </span>
-                      <span className="text-lg md:text-xl font-semibold text-slate-700">TL</span>
+                      <span className="text-xl md:text-2xl font-semibold text-slate-700">TL</span>
                     </div>
-                    <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Kişi Başı</span>
+                    <p className="text-sm text-slate-500 mt-1 italic">(Kişi Başı)</p>
+                    <div className="absolute -bottom-2 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent rounded-full"></div>
                   </div>
                 </div>
               </div>
@@ -190,44 +181,47 @@ export default function MenuPage() {
               {menuItems.length === 0 ? (
                 <div className="text-center py-24 bg-white rounded-2xl border border-stone-100">
                   <span className="text-4xl block mb-4">🍽️</span>
-                  <p className="text-muted-foreground text-lg">Henüz menü içeriği eklenmemiş.</p>
+                  <p className="text-muted-foreground text-lg italic">Henüz menü içeriği eklenmemiş.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
                   {menuItems.map((item) => (
                     <motion.div
                       key={item.id}
                       variants={fadeIn}
-                      className="bg-white rounded-lg p-2 md:p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-stone-100 group"
+                      className="flex items-start gap-1.5 rounded-xl p-3 group"
                     >
-                      {/* Thumbnail Image */}
-                      <div className="relative w-full aspect-square rounded-md overflow-hidden mb-2 bg-slate-100">
+                      {/* Circular Image */}
+                      <div className="relative w-24 h-24 md:w-28 md:h-28 flex-shrink-0 rounded-full overflow-hidden bg-slate-50 border-4 border-stone-100 shadow-sm">
                         {item.image_url ? (
                           <Image
                             src={item.image_url}
                             alt={item.title}
                             fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                            sizes="(max-width: 768px) 96px, 112px"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                            <span className="text-xl opacity-20">🍽️</span>
+                            <span className="text-lg opacity-20">🍽️</span>
                           </div>
                         )}
                       </div>
                       
-                      {/* Title */}
-                      <h4 className="font-semibold text-slate-900 text-xs md:text-sm mb-1 line-clamp-2 leading-tight">
-                        {item.title}
-                      </h4>
-                      
-                      {/* Description */}
-                      {item.description && (
-                        <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-2 leading-tight">
-                          {item.description}
-                        </p>
-                      )}
+                      {/* Content */}
+                      <div className="flex-1 min-w-0 pt-3 md:pt-4">
+                        {/* Title */}
+                        <h4 className="font-serif font-bold text-slate-900 text-sm md:text-base mb-1.5 leading-tight">
+                          {item.title}
+                        </h4>
+                        
+                        {/* Description */}
+                        {item.description && (
+                          <p className="text-xs md:text-sm text-muted-foreground leading-relaxed italic line-clamp-3">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
                     </motion.div>
                   ))}
                 </div>
@@ -237,7 +231,7 @@ export default function MenuPage() {
         ) : (
           <div className="text-center py-24 bg-white rounded-2xl border border-stone-100">
             <span className="text-4xl block mb-4">🍽️</span>
-            <p className="text-muted-foreground text-lg">Menü bilgisi bulunamadı.</p>
+            <p className="text-muted-foreground text-lg italic">Menü bilgisi bulunamadı.</p>
           </div>
         )}
       </div>

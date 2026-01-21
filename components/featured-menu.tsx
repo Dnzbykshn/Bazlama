@@ -96,7 +96,7 @@ export function FeaturedMenu() {
                 variants={itemVariants}
                 className="group bg-white rounded-[2.5rem] p-4 shadow-xl shadow-stone-200/50 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 border border-stone-100"
               >
-                <div className="relative w-full h-64 rounded-[2rem] overflow-hidden mb-6 bg-secondary">
+                <div className="relative w-full h-48 rounded-[2rem] overflow-hidden mb-6 bg-secondary">
                   {item.image_url ? (
                     <Image
                       src={item.image_url}

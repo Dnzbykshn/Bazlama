@@ -175,7 +175,7 @@ export default function FranchisePage() {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden">
+    <main className="min-h-screen overflow-hidden bg-white">
       <Header />
 
       {/* Header */}

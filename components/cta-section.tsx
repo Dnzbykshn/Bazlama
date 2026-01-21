@@ -24,7 +24,7 @@ export function CTASection() {
             <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight">
               Sizi Bekliyoruz
             </h2>
-            <p className="text-lg md:text-xl text-stone-300 font-light">
+            <p className="text-lg md:text-xl text-stone-300 font-light italic">
               Lezzetli bir kahvaltı ve sıcak bir sohbet için hemen yerinizi ayırtın.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
