@@ -88,7 +88,7 @@ export default function SubelerPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-transparent">
       <Header />
 
       {/* Hero Section */}

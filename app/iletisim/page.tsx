@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -81,169 +82,226 @@ export default function IletisimPage() {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-white">
+    <main className="min-h-screen relative bg-transparent">
+      {/* Fixed Hero Background */}
+      <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-[65vh] -z-10">
+        <Image
+          src="/DSC07011.jpg"
+          alt="İletişim Arkaplan"
+          fill
+          className="object-cover saturate-150"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/50" />
+      </div>
+
       <Header />
 
-      {/* Header */}
-      <section className="pt-32 pb-12 px-4">
+      {/* Hero Spacer */}
+      {/* Hero Content Overlay */}
+      <div className="w-full h-[55vh] flex items-center justify-center pt-24">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={fadeIn}
-          className="container mx-auto text-center"
+          className="text-center px-4"
         >
-          <span className="inline-block py-1 px-4 rounded-full bg-primary/10 text-primary text-sm font-medium tracking-wide mb-4">
-            Bize Ulaşın
-          </span>
-          <h1 className="text-5xl font-serif font-bold mb-4 text-foreground">İletişim</h1>
-          <p className="text-xl text-muted-foreground font-light italic max-w-2xl mx-auto">
-            Sorularınız, rezervasyon talepleriniz veya sadece merhaba demek için buradayız.
-          </p>
+
+          <div className="inline-block p-8 rounded-3xl bg-black/20 backdrop-blur-md border border-white/10 shadow-2xl">
+            <span className="inline-block py-1 px-4 rounded-full bg-white/10 text-white backdrop-blur-sm text-sm font-medium tracking-wide mb-2 border border-white/10">
+              Bize Ulaşın
+            </span>
+            <h1 className="text-5xl font-serif font-bold text-white mb-4 mt-2">İletişim</h1>
+            <p className="text-lg text-white/90 font-light italic max-w-lg mx-auto mt-2">
+              Sorularınız veya rezervasyon talepleriniz için buradayız.
+            </p>
+          </div>
         </motion.div>
-      </section>
-
-      <div className="container mx-auto px-4 pb-24 max-w-6xl">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-
-          {/* Contact Info */}
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={slideInLeft}
-            className="space-y-8"
-          >
-            {/* Info Cards */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100 space-y-8">
-              <h2 className="text-2xl font-serif font-bold mb-6">İletişim Bilgileri</h2>
-
-              <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <MapPin className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-1">Adres</h3>
-                  <p className="text-muted-foreground leading-relaxed italic">
-                    Kızılırmak mah. Vatan cad. 16 D
-                    <br />
-                    Sivas / 58070
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <Phone className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-1">Telefon</h3>
-                  <a href="tel:+905402714040" className="text-muted-foreground hover:text-primary transition-colors text-lg">
-                    +90 540 271 40 40
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <Mail className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-1">E-posta</h3>
-                  <a href="mailto:info@pisikahvalti.com" className="text-muted-foreground hover:text-primary transition-colors text-lg">
-                    info@pisikahvalti.com
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Map */}
-            <div className="h-80 w-full rounded-[2.5rem] overflow-hidden shadow-xl shadow-stone-200/50 border border-stone-100">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.5!2d28.9784!3d41.0082!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzI5LjUiTiAyOMKwNTgnNDIuMiJF!5e0!3m2!1str!2str!4v1234567890"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="w-full h-full grayscale hover:grayscale-0 transition-all duration-700"
-              />
-            </div>
-          </motion.div>
-
-          {/* Contact Form */}
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={slideInRight}
-          >
-            <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100">
-              <h2 className="text-2xl font-serif font-bold mb-2">Bize Yazın</h2>
-              <p className="text-muted-foreground mb-8 italic">Size en kısa sürede dönüş yapacağız.</p>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-base font-medium pl-1">İsim</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Adınız Soyadınız"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    className="h-12 rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-base font-medium pl-1">E-posta</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="ornek@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    className="h-12 rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-base font-medium pl-1">Mesaj</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Mesajınızı buraya yazın..."
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    rows={6}
-                    required
-                    className="resize-none rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors p-4"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full h-12 rounded-xl text-lg font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-                      Gönderiliyor...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5 mr-3" />
-                      Gönder
-                    </>
-                  )}
-                </Button>
-              </form>
-            </div>
-          </motion.div>
-
-        </div>
       </div>
+
+
+
+      <section className="relative z-10 bg-[var(--background)] pb-24 pt-12 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.05)]">
+        <div className="container mx-auto px-4 max-w-6xl">
+          {/* Details Title */}
+          <div className="relative w-[500px] h-[340px] mx-auto -mt-40 -mb-20 flex items-center justify-center">
+            <Image
+              src="/baslık_cerceve.png"
+              alt="Çerçeve"
+              fill
+              className="object-contain opacity-100"
+            />
+            <h2 className="relative z-10 text-4xl font-serif font-bold text-stone-900 pb-2">Detaylar</h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+
+            {/* Contact Info */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={slideInLeft}
+              className="space-y-8"
+            >
+              {/* Large Framed Visual */}
+              <div className="relative w-full h-[720px] mb-12">
+                {/* Frame Background/Overlay */}
+                <div className="absolute w-[3200px] h-[1134px] -ml-305 -mt-59 inset-0 z-20 pointer-events-none">
+                  <Image
+                    src="/cerceve_2.png"
+                    alt="Çerçeve"
+                    fill
+                    className="object-fill"
+                  />
+                </div>
+                {/* Content Image */}
+                <div className="relative w-full h-full z-10 p-[6%]">
+                  <div className="relative w-full h-full -mt-6 rounded-2xl overflow-hidden shadow-sm">
+                    <Image
+                      src="/DSC04385.jpg"
+                      alt="İletişim Görseli"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Cards */}
+              <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100 space-y-8">
+                <h2 className="text-3xl font-serif font-bold mb-6 text-stone-900">İletişim Bilgileri</h2>
+
+                <div className="flex items-start gap-6 group">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <MapPin className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">Adres</h3>
+                    <p className="text-muted-foreground leading-relaxed italic">
+                      Kızılırmak mah. Vatan cad. 16 D
+                      <br />
+                      Sivas / 58070
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-6 group">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <Phone className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">Telefon</h3>
+                    <a href="tel:+905402714040" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                      +90 540 271 40 40
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-6 group">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <Mail className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">E-posta</h3>
+                    <a href="mailto:info@pisikahvalti.com" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                      info@pisikahvalti.com
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+
+            </motion.div>
+
+            {/* Contact Form */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={slideInRight}
+            >
+              <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100">
+                <h2 className="text-2xl font-serif font-bold mb-2">Bize Yazın</h2>
+                <p className="text-muted-foreground mb-8 italic">Size en kısa sürede dönüş yapacağız.</p>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-base font-medium pl-1">İsim</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Adınız Soyadınız"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                      className="h-12 rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-base font-medium pl-1">E-posta</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="ornek@email.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                      className="h-12 rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="message" className="text-base font-medium pl-1">Mesaj</Label>
+                    <Textarea
+                      id="message"
+                      placeholder="Mesajınızı buraya yazın..."
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      rows={6}
+                      required
+                      className="resize-none rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors p-4"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full h-12 rounded-xl text-lg font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                        Gönderiliyor...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5 mr-3" />
+                        Gönder
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </div>
+
+              {/* Map */}
+              <div className="h-80 w-full mt-16 rounded-[2.5rem] overflow-hidden shadow-xl shadow-stone-200/50 border border-stone-100">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.5!2d28.9784!3d41.0082!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzI5LjUiTiAyOMKwNTgnNDIuMiJF!5e0!3m2!1str!2str!4v1234567890"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-full grayscale hover:grayscale-0 transition-all duration-700"
+                />
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
       <Footer />
-    </main>
+    </main >
   )
 }
