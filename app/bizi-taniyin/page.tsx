@@ -106,6 +106,7 @@ export default function BiziTaniyinPage() {
     hero_badge: "Hikayemiz",
     hero_title: "Bizi Tanıyın",
     hero_description: "Geleneksel Türk kahvaltısının en özel halini, modern bir dokunuş ve sonsuz bir sevgiyle harmanlıyoruz.",
+    story_image_url: "/images/image.png",
     story_title: "Soframızın Hikayesi",
     story_content_paragraph1: "Pişi Kahvaltı, sadece bir kahvaltı mekanı değil; geleneksel Türk misafirperverliğinin vücut bulmuş halidir. Her sabah gün doğmadan başlayan hazırlığımız, annelerimizin tariflerine sadık kalarak devam ediyor.",
     story_content_paragraph2: 'Modern yaşamın koşuşturmacası içinde, "doymadan kalkmak yok" diyerek sizi yavaşlamaya, sevdiklerinizle uzun ve keyifli bir sofrayı paylaşmaya davet ediyoruz.',
@@ -120,9 +121,11 @@ export default function BiziTaniyinPage() {
     mission_title: "Misyonumuz",
     mission_content_paragraph1: '"Siz tamam diyene kadar, biz servise devam ediyoruz ;)" felsefesiyle yola çıktık. Amacımız sadece karnınızı doyurmak değil; gözünüzü ve gönlünüzü de doyurmak.',
     mission_content_paragraph2: "Her misafirimizin, kendi evinde hissettiği o sıcaklığı ve samimiyeti yaşamasını sağlamak bizim en büyük tutkumuz.",
+    mission_image_url: "/images/image.png",
     vision_title: "Vizyonumuz",
     vision_content_paragraph1: "Gelecekte, Türkiye'nin her köşesinde Pişi Kahvaltı'nın sıcaklığını ve lezzetini yaşatmak istiyoruz.",
     vision_content_paragraph2: "Geleneksel değerlerimizi koruyarak, modern dünyanın ihtiyaçlarına uyum sağlayan, sürdürülebilir ve başarılı bir franchise ağı oluşturmak en büyük hedefimiz.",
+    vision_image_url: "/images/image.png",
     franchise_title: "Franchise Fırsatı",
     franchise_description: "Pişi Kahvaltı ailesine katılın ve kendi işinizin sahibi olun. Başarılı bir franchise sistemi ile yanınızdayız.",
     franchise_button_text: "Franchise Başvurusu Yap",
@@ -131,12 +134,13 @@ export default function BiziTaniyinPage() {
   const content = aboutPage || defaultValues
 
   return (
-    <main className="min-h-screen overflow-hidden bg-white">
+    <main className="min-h-screen overflow-hidden bg-transparent">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4">
-        <div className="container mx-auto">
+      <section className="pt-32 pb-12 px-4 relative overflow-hidden">
+        <motion.div
+          className="container mx-auto">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -153,7 +157,7 @@ export default function BiziTaniyinPage() {
               {content.hero_description}
             </p>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       <div className="container mx-auto px-4 pb-24 space-y-32">

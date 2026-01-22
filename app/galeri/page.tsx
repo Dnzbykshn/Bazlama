@@ -119,7 +119,7 @@ export default function GaleriPage() {
 
 
   return (
-    <main className="min-h-screen relative bg-white">
+    <main className="min-h-screen relative bg-transparent">
       <div className="relative z-10">
         <Header />
 

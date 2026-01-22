@@ -63,7 +63,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className={`${playfairDisplay.variable} ${poppins.variable}`} suppressHydrationWarning>
-      <body className={`${poppins.className} antialiased`} suppressHydrationWarning>
+      <body
+        className={`${poppins.className} antialiased`}
+        style={{ backgroundColor: "#8ad7d6" }}
+        suppressHydrationWarning
+      >
         <AuthProvider>
           {children}
         </AuthProvider>
