@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-transparent">
+    <main className="min-h-screen">
       <Header />
       <HeroSection />
       <AboutSection />
@@ -16,6 +16,7 @@ export default function Home() {
       <GalleryPreview />
       <CTASection />
       <Footer />
+    
     </main>
   )
 }
