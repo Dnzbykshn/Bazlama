@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { motion, AnimatePresence, type Variants } from "framer-motion"
+import { motion, type Variants } from "framer-motion"
 import { supabase } from "@/lib/supabase"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -57,19 +57,6 @@ export default function SubelerPage() {
   const [branches, setBranches] = useState<Branch[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Slider state
-  const [heroIndex, setHeroIndex] = useState(0)
-
-  const heroImages = ["DSC07011.jpg", "DSC04385.jpg", "Szutest-5.jpg"]
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setHeroIndex((prev) => (prev + 1) % heroImages.length)
-    }, 4000)
-
-    return () => window.clearInterval(intervalId)
-  }, [])
-
   useEffect(() => {
     fetchBranches()
   }, [])
@@ -105,73 +92,29 @@ export default function SubelerPage() {
       <Header />
 
       {/* Hero Section */}
-      {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full h-[60vh] overflow-hidden"
-      >
-        {/* Slider */}
-        {/* Slider */}
-        <AnimatePresence mode="popLayout" initial={false}>
+      <section className="relative pt-32 pb-20 px-4">
+        <div className="container mx-auto">
           <motion.div
-            key={heroIndex}
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 1, ease: "easeInOut" }}
-            className="absolute inset-0"
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
+            className="text-center max-w-3xl mx-auto space-y-6"
           >
-            <Image
-              src={`/${heroImages[heroIndex]}`}
-              alt="Slider Image"
-              fill
-              priority
-              className="object-cover"
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40" />
-
-        {/* Content */}
-        {/* Content */}
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10"
-        >
-
-          {/* Frosted Map Container */}
-          <div className="relative w-[600px] h-[300px] flex items-center justify-center mt-24">
-            {/* The Frosted Shape */}
-            <div
-              className="absolute inset-0 bg-white/80 backdrop-blur-3xl"
-              style={{
-                maskImage: 'url(/harita.png)',
-                maskSize: 'contain',
-                maskRepeat: 'no-repeat',
-                maskPosition: 'center',
-                WebkitMaskImage: 'url(/harita.png)',
-                WebkitMaskSize: 'contain',
-                WebkitMaskRepeat: 'no-repeat',
-                WebkitMaskPosition: 'center'
-              }}
-            />
-            {/* Title on top */}
-            <h1 className="relative z-10 text-4xl md:text-6xl font-serif font-bold text-white drop-shadow-2xl">
+            <span className="inline-block py-1 px-4 rounded-full bg-primary/10 text-primary text-sm font-medium tracking-wide">
+              Şubelerimiz
+            </span>
+            <h1 className="text-5xl md:text-7xl font-serif font-bold text-foreground">
               Şubelerimiz
             </h1>
-          </div>
-
-          <p className="text-xl text-white/90 leading-relaxed font-light italic mt-4 max-w-2xl drop-shadow-md">
-            Türkiye'nin dört bir yanında sizlerle buluşuyoruz. En yakın şubemizi keşfedin.
-          </p>
+            <p className="text-xl text-muted-foreground leading-relaxed font-light italic">
+              Türkiye'nin dört bir yanında sizlerle buluşuyoruz. En yakın şubemizi keşfedin.
+            </p>
+          </motion.div>
         </div>
-      </motion.div>
+      </section>
 
       {/* Branches Grid */}
-      <section className="container mx-auto px-4 pb-24 mt-24">
+      <section className="container mx-auto px-4 pb-24">
         {loading ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground italic">Yükleniyor...</p>
@@ -259,6 +202,6 @@ export default function SubelerPage() {
       </section>
 
       <Footer />
-    </main >
+    </main>
   )
 }
