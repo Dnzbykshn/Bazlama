@@ -211,7 +211,7 @@ export function MenuPageCTASection() {
 
                              {/* <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-bold text-stone-800 shadow-lg z-10 flex items-center gap-1">
                                 {item.price}
-                             </div> */}
+                             </div>  commit*/}
                         </div>
 
                         {/* İçerik */}
