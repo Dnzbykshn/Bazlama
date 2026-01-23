@@ -206,6 +206,46 @@ export default function MenuPage() {
               variants={fadeIn}
               className="max-w-2xl mx-auto mb-12"
             >
+              <div className="relative text-center space-y-6 isolate mx-auto w-[1470px] max-w-[95vw] h-[300px] flex flex-col justify-center">
+                {/* Background image behind the texts */}
+                <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-0 w-screen overflow-hidden rounded-3xl">
+                  <Image
+                    src="/hero.png"
+                    alt=""
+                    fill
+                    className="object-cover object-left opacity-40"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-white/45"></div>
+                </div>
+                <div className="relative z-10">
+                  {/* Main Title */}
+                  <h2 className="text-5xl md:text-6xl font-serif font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent mb-3 tracking-tight">
+                    {menu.title}
+                  </h2>
+                  
+                  {/* Description */}
+                  {menu.description && (
+                    <p className="text-lg md:text-xl text-slate-600 mb-8 leading-relaxed italic max-w-xl mx-auto">
+                      {menu.description}
+                    </p>
+                  )}
+                  
+                  {/* Price with underline */}
+                  <div className="inline-block">
+                    <div className="relative">
+                      <div className="flex items-baseline justify-center gap-2">
+                        <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                          {menu.price.toFixed(2)}
+                        </span>
+                        <span className="text-xl md:text-2xl font-semibold text-slate-700">TL</span>
+                      </div>
+                      <p className="text-sm text-slate-500 mt-1 italic">(Kişi Başı)</p>
+                      <div className="absolute -bottom-2 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </motion.div>
 
             {/* Menu Items Section */}
