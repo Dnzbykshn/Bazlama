@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 
 const navLinks = [
   { href: "/", label: "Anasayfa" },
@@ -26,7 +26,6 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
-  // Handle scroll effect for slightly changing appearance
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20)
@@ -40,22 +39,24 @@ export function Header() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed top-6 left-0 right-0 z-50 flex justify-center px-4 transition-all duration-300 pointer-events-none`}
+      className={`fixed top-6 left-0 right-0 z-[9999] flex justify-center px-4 transition-all duration-300 pointer-events-none`}
     >
       <div className={`
         pointer-events-auto
         flex items-center justify-between 
-        w-full max-w-6xl 
+        w-full max-w-7xl 
         h-[4.5rem] px-4 sm:px-6 
         bg-teal-50/90 backdrop-blur-xl 
         shadow-lg shadow-teal-900/10 
         border border-teal-200/50
         rounded-full 
         transition-all duration-300
+        relative /* Ortalamak için gerekli */
         ${scrolled ? 'bg-teal-50/95 shadow-xl shadow-teal-900/15' : ''}
       `}>
-        {/* Left Section: Logo */}
-        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-all duration-300 group">
+        
+        {/* --- SOL KISIM: LOGO İKONU --- */}
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-all duration-300 group z-20">
           <div className="relative w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center p-2 group-hover:scale-110 transition-transform overflow-hidden">
             <Image
               src="/pisikahvalti-logo.png"
@@ -66,12 +67,27 @@ export function Header() {
               priority
             />
           </div>
-          <span className="text-xl font-serif font-bold text-foreground hidden sm:block tracking-wide">
+          {/* Masaüstünde logo yanında yazı görünsün, mobilde gizlensin (çünkü ortaya alacağız) */}
+          <span className="text-xl font-serif font-bold text-foreground hidden lg:block tracking-wide">
             Pişi Kahvaltı
           </span>
         </Link>
 
-        {/* Center: Navigation */}
+        {/* --- MOBİL İÇİN ORTA ALAN: MARKA İSMİ --- */}
+        {/* lg:hidden -> Sadece mobilde görünür. Absolute center -> Tam ortadadır. */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:hidden z-10">
+          <Link href="/" className="font-serif text-lg font-bold text-teal-900 tracking-wide whitespace-nowrap">
+             Pişi Kahvaltı
+          </Link>
+          
+          {/* ALTERNATİF: Eğer "ALAÇATI" yazmak istersen üstteki Link'i silip bunu açabilirsin:
+          <span className="text-[10px] font-bold tracking-[0.3em] text-teal-600 uppercase">
+             ALAÇATI
+          </span> 
+          */}
+        </div>
+
+        {/* --- ORTA KISIM: NAVİGASYON (MASAÜSTÜ) --- */}
         <nav className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
@@ -104,20 +120,20 @@ export function Header() {
           </DropdownMenu>
         </nav>
 
-        {/* Right Section: Actions */}
-        <div className="flex items-center gap-3">
-          {/* WhatsApp Button */}
+        {/* --- SAĞ KISIM: İŞLEMLER --- */}
+        <div className="flex items-center gap-3 z-20">
+          {/* WhatsApp Butonu */}
           <Link
             href="https://wa.me/905402714040"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-[#25D366] hover:bg-[#20BA5A] text-white font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-[#25D366]/30"
+            className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-[#8AD7D6] hover:bg-[#20BA5A] text-white font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-[#25D366]/30"
           >
             <MessageCircle className="w-4 h-4" fill="white" />
             WhatsApp
           </Link>
 
-          {/* Mobile Menu Trigger */}
+          {/* Hamburger Menü */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden rounded-full hover:bg-teal-100/80">
@@ -158,7 +174,7 @@ export function Header() {
                   </Link>
                   <Link
                     href="/bizi-taniyin/franchise"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={() => setMobileMenuOpen(false)} 
                     className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all pl-8"
                   >
                     Franchise Başvuru
