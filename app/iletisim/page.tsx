@@ -343,7 +343,89 @@ export default function IletisimPage() {
           </motion.div>
         </div>
       </section>
+{/* --- YENİ BÖLÜM: MERAK ETTİKLERİNİZ & SOSYAL (BEYAZ ARKAPLAN) --- */}
+      <section className="relative py-24 px-6 bg-[#fffcf8] text-[#022c22] overflow-hidden">
+        
+        {/* Dekoratif Arka Plan (Silik Desenler) */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/cream-paper.png")` }}></div>
+        <div className="absolute -top-24 -left-24 w-64 h-64 bg-[#8AD7D6]/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-400/5 rounded-full blur-[100px] pointer-events-none"></div>
 
+        <div className="container mx-auto max-w-6xl relative z-10">
+          
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
+            
+            {/* SOL: SIKÇA SORULAN SORULAR */}
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-[#8AD7D6]/10 rounded-full text-[#8AD7D6] text-xs font-bold tracking-widest uppercase">
+                <span className="w-2 h-2 rounded-full bg-[#8AD7D6]"></span>
+                Merak Ettikleriniz
+              </div>
+              <h2 className="text-4xl font-serif font-bold mb-8 text-[#022c22]">Sıkça Sorulan Sorular</h2>
+              
+              <div className="space-y-6">
+                {[
+                  { q: "Rezervasyon gerekli mi?", a: "Hafta sonları yoğunluk olabildiği için rezervasyon yapmanızı öneririz. Hafta içi genellikle yer bulmak daha kolaydır." },
+                  { q: "Otopark alanınız var mı?", a: "Evet, restoranımızın hemen yanında misafirlerimize özel ücretsiz otopark alanımız mevcuttur." },
+                  { q: "Özel etkinlikler için yer ayırtabilir miyiz?", a: "Kesinlikle! Doğum günü, kutlama veya toplantılarınız için özel masa düzeni ve menü seçeneklerimiz mevcuttur." },
+                  { q: "Glutensiz seçenekleriniz var mı?", a: "Evet, menümüzde glutensiz ekmek ve kahvaltı seçeneklerimiz bulunmaktadır. Lütfen sipariş verirken belirtiniz." }
+                ].map((item, index) => (
+                  <div key={index} className="group border-b border-[#022c22]/10 pb-6 last:border-0">
+                    <h3 className="text-lg font-bold mb-2 group-hover:text-[#8AD7D6] transition-colors flex items-center gap-2 cursor-pointer">
+                      {item.q}
+                    </h3>
+                    <p className="text-gray-500 font-light leading-relaxed">
+                      {item.a}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* SAĞ: TOPLULUK & DAVET KARTI */}
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex flex-col justify-center"
+            >
+              <div className="relative bg-[#022c22] rounded-[2.5rem] p-10 text-white shadow-2xl overflow-hidden text-center">
+                
+                {/* İç Dekorasyon */}
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#8AD7D6] to-yellow-400"></div>
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#8AD7D6] rounded-full blur-[60px] opacity-20"></div>
+
+                <div className="relative z-10 space-y-6">
+                  <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-2 border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#8AD7D6]"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                  </div>
+                  
+                  <h3 className="text-3xl font-serif font-bold">Ailemize Katılın</h3>
+                  <p className="text-gray-300 font-light leading-relaxed">
+                    En yeni lezzetlerimizi, etkinliklerimizi ve sürpriz çekilişlerimizi kaçırmamak için bizi sosyal medyada takip edin.
+                  </p>
+
+                  <div className="pt-4 flex flex-col gap-4">
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-full bg-[#8AD7D6] hover:bg-[#7acaca] text-[#022c22] font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2">
+                      Instagram'da Takip Et
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                    <p className="text-sm text-gray-500">@pisikahvalti • #doymadankalkmakyok</p>
+                  </div>
+                </div>
+
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
       <Footer />
     </main>
   )

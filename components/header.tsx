@@ -35,7 +35,7 @@ export function Header() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed top-6 left-0 right-0 z-[9999] flex justify-center px-4 transition-all duration-300 pointer-events-none`}
+      className={`fixed top-6 left-0 right-0 z-[50] flex justify-center px-4 transition-all duration-300 pointer-events-none`}
     >
       <div className={`
         pointer-events-auto
@@ -141,20 +141,8 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
-                  <Link
-                    href="/bizi-taniyin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all"
-                  >
-                    Bizi Tanıyın
-                  </Link>
-                  <Link
-                    href="/bizi-taniyin/franchise"
-                    onClick={() => setMobileMenuOpen(false)} 
-                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all pl-8"
-                  >
-                    Franchise Başvuru
-                  </Link>
+               
+                
                   <Link
                     href="https://wa.me/905402714040"
                     target="_blank"
