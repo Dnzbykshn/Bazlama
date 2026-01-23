@@ -192,7 +192,7 @@ export default function IletisimPage() {
                   İletişim Formu
                 </span>
                 <h2 className="text-3xl font-serif text-white mt-4">Bize Yazın</h2>
-                <p className="text-gray-400 text-sm mt-2">Düşüncelerinizi duymayı çok isteriz.</p>
+                <p className="text-gray-400 text-sm mt-2">Düşüncelerinizi duymayı çok isteriz. 😊</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">

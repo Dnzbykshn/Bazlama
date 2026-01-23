@@ -1,35 +1,26 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import Image from "next/image"
 import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { ChevronLeft, ChevronRight, X, ZoomIn, Camera, Star, Coffee } from "lucide-react"
+import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { Caveat, Inter, Playfair_Display } from "next/font/google"
-import { cn } from "@/lib/utils"
-import { GalleryPreview } from "@/components/gallery-preview"
-
-// --- FONT AYARLARI ---
-const caveat = Caveat({ subsets: ["latin"], weight: ["700"] })
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] })
-const inter = Inter({ subsets: ["latin"] })
-
-// --- MARKA RENGİ ---
-const accentColor = "#8AD7D6";
+import { cn } from "@/lib/utils" // Eğer utils dosyanızda cn varsa kullanın, yoksa silebilirsiniz.
 
 interface GalleryItem {
   id: string
   image_url: string
   title: string | null
   description: string | null
-  category?: string
+  category?: string // Kategori eklenebilir
 }
 
+// Kategorileri veriden türetmek veya sabit tutmak için
 const CATEGORIES = ["Tümü", "Kahvaltı", "Mekan", "Lezzetler", "Atmosfer"]
 
 export default function GaleriPage() {
@@ -46,16 +37,16 @@ export default function GaleriPage() {
         setLoading(true)
 
         if (!isSupabaseConfigured) {
-          // MOCK DATA (Temaya uygun içerik)
+          // Mock data - Kategorileri başlık veya açıklamadan uyduruyoruz simülasyon için
           const mockData = [
-            { id: "1", image_url: "/DSC04385.jpg", title: "Serpme Kahvaltı", description: "En taze ürünlerle hazırlanan serpme kahvaltımız.", category: "Kahvaltı" },
-            { id: "2", image_url: "/DSC04385.jpg", title: "Bahçe Keyfi", description: "Zeytin ağaçları altında huzur.", category: "Mekan" },
-            { id: "3", image_url: "/DSC04385.jpg", title: "Atom Pişi", description: "Çikolata dolgulu lezzet bombası.", category: "Lezzetler" },
-            { id: "4", image_url: "/DSC04385.jpg", title: "Gün Batımı", description: "Sivas manzarası eşliğinde.", category: "Atmosfer" },
-            { id: "5", image_url: "/DSC04385.jpg", title: "Simit Tabağı", description: "Sıcak ve çıtır.", category: "Kahvaltı" },
-            { id: "6", image_url: "/DSC04385.jpg", title: "İç Mekan", description: "Modern ve sıcak dekorasyon.", category: "Mekan" },
-            { id: "7", image_url: "/DSC04385.jpg", title: "Sucuklu Yumurta", description: "Bakır sahanda geleneksel lezzet.", category: "Lezzetler" },
-            { id: "8", image_url: "/DSC04385.jpg", title: "Detaylar", description: "Her köşede bir hikaye.", category: "Atmosfer" },
+            { id: "1", image_url: "/images/image.png", title: "Serpme Kahvaltı", description: "En taze ürünlerle hazırlanan serpme kahvaltımız.", category: "Kahvaltı" },
+            { id: "2", image_url: "/images/image.png", title: "Bahçe Keyfi", description: "Huzurlu ve sıcak atmosferimiz.", category: "Mekan" },
+            { id: "3", image_url: "/images/image.png", title: "Özel Soslu Patates", description: "Özel tarifimizle hazırlanan lezzetler.", category: "Lezzetler" },
+            { id: "4", image_url: "/images/image.png", title: "Akşam Işıkları", description: "Keyifli anlar için.", category: "Atmosfer" },
+            { id: "5", image_url: "/images/image.png", title: "Simit Tabağı", description: "Doyurucu ve lezzetli.", category: "Kahvaltı" },
+            { id: "6", image_url: "/images/image.png", title: "İç Mekan", description: "Sizi bekliyoruz.", category: "Mekan" },
+            { id: "7", image_url: "/images/image.png", title: "Menemen", description: "Bakır sahanda sıcak lezzet.", category: "Lezzetler" },
+            { id: "8", image_url: "/images/image.png", title: "Detaylar", description: "İnce dokunuşlar.", category: "Atmosfer" },
           ]
           setImages(mockData)
           setFilteredImages(mockData)
@@ -76,7 +67,10 @@ export default function GaleriPage() {
       } catch (err: any) {
         console.error("Error fetching gallery:", err)
         setError(err.message || "Galeri yüklenirken bir hata oluştu")
+        
+        // Fallback mock
         if (!isSupabaseConfigured) {
+           // ... (Yukarıdaki mock datanın aynısı buraya da eklenebilir)
            setImages([]) 
         } else {
           setImages([])
@@ -89,11 +83,12 @@ export default function GaleriPage() {
     fetchGallery()
   }, [])
 
-  // Filtreleme
+  // Kategori Filtreleme Mantığı
   useEffect(() => {
     if (activeCategory === "Tümü") {
       setFilteredImages(images)
     } else {
+      // Not: Gerçek veride 'category' alanı yoksa title veya description içinde arama yapabiliriz
       setFilteredImages(images.filter(img => 
         (img.category === activeCategory) || 
         (img.title?.includes(activeCategory)) ||
@@ -126,63 +121,36 @@ export default function GaleriPage() {
   }, [selectedImageIndex, filteredImages.length])
 
   return (
-    <main className={`min-h-screen relative bg-white selection:bg-[#8AD7D6] selection:text-white ${inter.className}`}>
+    <main className="min-h-screen relative bg-white selection:bg-stone-200">
       <div className="relative z-10">
         <Header />
-        {/* --- HERO / HEADER BÖLÜMÜ (Temaya Uygun) --- */}
-        {/* Arka planda hafif yeşil/teal tonlu gradient ve dekoratif ikonlar */}
-        <section className="relative pt-40 pb-16 px-4 overflow-hidden bg-gradient-to-b from-[#e6f4f1] to-white">
-        
-          {/* Dekoratif Arka Plan İkonları (Silik) */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-             <motion.div 
-                animate={{ rotate: [0, 10, 0] }}
-                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-20 -left-10 text-[#8AD7D6]/10"
-             >
-                <Coffee size={200} />
-             </motion.div>
-             <motion.div 
-                animate={{ y: [0, -20, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-10 -right-10 text-[#8AD7D6]/10"
-             >
-                <Camera size={180} />
-             </motion.div>
-          </div>
 
+        {/* Hero Section */}
+        <section className="pt-32 pb-8 px-4 border-b border-stone-100">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="container mx-auto text-center relative z-10"
+            transition={{ duration: 0.6 }}
+            className="container mx-auto text-center"
           >
-            {/* Rozet */}
-            <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md px-5 py-2 rounded-full border border-[#8AD7D6]/30 mb-6 shadow-sm">
-                <Star className="w-4 h-4 text-[#8AD7D6] fill-[#8AD7D6]" />
-                <span className="text-xs font-bold tracking-[0.2em] text-stone-600 uppercase">Bizim Hikayemiz</span>
-            </div>
-
-            <h1 className={`text-5xl md:text-7xl font-bold mb-6 text-stone-900 ${playfair.className}`}>
-              Mutluluğun <span className="text-[#8AD7D6] italic">Fotoğrafı</span>
+            <h1 className="text-4xl md:text-6xl font-serif font-medium mb-4 text-stone-900 tracking-tight">
+              Galeri
             </h1>
-            
-            <p className="text-lg md:text-xl text-stone-500 font-light max-w-2xl mx-auto leading-relaxed">
-              Sivas'ın en keyifli köşesinden, en sıcak anlar. <br/>
-              Anılarınıza ortak olduğumuz her kare bizim için değerli.
+            <p className="text-lg text-stone-500 font-light max-w-2xl mx-auto">
+              Mutfağımızdan çıkan lezzetler, mekanımızın huzurlu köşeleri ve unutulmaz anlar.
             </p>
 
-            {/* Kategori Filtreleri (Temaya Uygun Tasarım) */}
-            <div className="flex flex-wrap justify-center gap-3 mt-10">
+            {/* Kategori Filtreleri */}
+            <div className="flex flex-wrap justify-center gap-2 mt-8">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
                   className={cn(
-                    "px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 border shadow-sm",
+                    "px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 border",
                     activeCategory === cat
-                      ? "bg-[#8AD7D6] text-white border-[#8AD7D6] shadow-md scale-105"
-                      : "bg-white text-stone-500 border-stone-100 hover:border-[#8AD7D6]/50 hover:text-[#8AD7D6]"
+                      ? "bg-stone-900 text-white border-stone-900"
+                      : "bg-white text-stone-600 border-stone-200 hover:border-stone-400 hover:bg-stone-50"
                   )}
                 >
                   {cat}
@@ -192,10 +160,9 @@ export default function GaleriPage() {
           </motion.div>
         </section>
 
-        {/* --- GALERİ GRID --- */}
-        <div className="container mx-auto px-4 pb-32 min-h-[50vh]">
+        <div className="container mx-auto px-4 py-12 min-h-[50vh]">
           {error && (
-            <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-center text-red-600 mb-8 mx-auto max-w-2xl">
+            <div className="bg-red-50 border border-red-100 rounded-lg p-4 text-center text-red-600 mb-8">
               {error}
             </div>
           )}
@@ -203,31 +170,24 @@ export default function GaleriPage() {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
-                <Skeleton key={i} className="aspect-[4/5] w-full rounded-[2rem] bg-stone-100" />
+                <Skeleton key={i} className="aspect-[4/5] w-full rounded-xl bg-stone-100" />
               ))}
             </div>
           ) : filteredImages.length === 0 ? (
-            <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-24 bg-stone-50/50 rounded-[3rem] border border-stone-100"
-            >
-              <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-white mb-4 shadow-sm">
-                  <Camera className="w-10 h-10 text-stone-300" />
-              </div>
-              <p className="text-stone-400 text-lg font-medium">Bu kategoride henüz görsel yok.</p>
+            <div className="text-center py-20">
+              <p className="text-stone-400 text-lg">Bu kategoride görsel bulunamadı.</p>
               <Button 
                 variant="link" 
                 onClick={() => setActiveCategory("Tümü")}
-                className="mt-2 text-[#8AD7D6]"
+                className="mt-2 text-stone-800"
               >
                 Tümünü Göster
               </Button>
-            </motion.div>
+            </div>
           ) : (
             <motion.div 
               layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
               <AnimatePresence>
                 {filteredImages.map((item, index) => (
@@ -237,8 +197,8 @@ export default function GaleriPage() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.4, type: "spring", stiffness: 100 }}
-                    className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-white shadow-lg shadow-stone-200/40 hover:shadow-2xl hover:shadow-[#8AD7D6]/20 transition-all duration-500 aspect-[4/5] hover:-translate-y-2"
+                    transition={{ duration: 0.3 }}
+                    className="group relative cursor-pointer overflow-hidden rounded-xl bg-stone-100 shadow-sm hover:shadow-xl transition-all duration-500 aspect-[4/5]"
                     onClick={() => setSelectedImageIndex(index)}
                   >
                     <Image
@@ -249,25 +209,25 @@ export default function GaleriPage() {
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     
-                    {/* Hover Overlay - Temaya Uygun */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#022c22]/90 via-[#022c22]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    {/* Hover Overlay - Modern Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                       <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                         {item.category && (
-                          <span className="inline-block px-3 py-1 rounded-full bg-[#8AD7D6] text-white text-[10px] font-bold tracking-widest uppercase mb-2 shadow-sm">
+                          <span className="text-stone-300 text-xs font-medium tracking-wider uppercase mb-1 block">
                             {item.category}
                           </span>
                         )}
-                        <h3 className={`text-white text-2xl mb-1 ${playfair.className}`}>{item.title}</h3>
+                        <h3 className="text-white font-serif text-xl mb-1">{item.title}</h3>
                         {item.description && (
-                          <p className="text-stone-200 text-sm font-light line-clamp-2 leading-relaxed opacity-90">
+                          <p className="text-stone-300 text-sm line-clamp-2 leading-relaxed">
                             {item.description}
                           </p>
                         )}
                       </div>
                     </div>
 
-                    {/* Büyüteç İkonu */}
-                    <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-50 group-hover:scale-100 border border-white/30">
+                    {/* Zoom Icon Hint */}
+                    <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform -translate-y-2 group-hover:translate-y-0">
                       <ZoomIn className="w-5 h-5 text-white" />
                     </div>
                   </motion.div>
@@ -277,98 +237,86 @@ export default function GaleriPage() {
           )}
         </div>
 
-        {/* --- LIGHTBOX (AÇILIR PENCERE) --- */}
+        {/* Full Screen Image Viewer (Lightbox) */}
         {selectedImageIndex !== null && filteredImages[selectedImageIndex] && (
           <Dialog open={true} onOpenChange={(open) => !open && setSelectedImageIndex(null)}>
-            <DialogContent className="max-w-[100vw] w-full h-full p-0 overflow-hidden bg-[#022c22]/95 border-none shadow-none m-0 rounded-none backdrop-blur-md">
+            <DialogContent className="max-w-[100vw] w-full h-full p-0 overflow-hidden bg-stone-950/95 border-none shadow-none m-0 rounded-none backdrop-blur-xl">
               <DialogTitle className="sr-only">Detaylı Görünüm</DialogTitle>
               
               <div className="relative w-full h-full flex items-center justify-center">
-                
-                {/* Kapat Butonu */}
+                {/* Close Button */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-6 right-6 z-50 text-white/70 hover:text-white hover:bg-white/10 rounded-full w-12 h-12 transition-all hover:rotate-90"
+                  className="absolute top-6 right-6 z-50 text-white/70 hover:text-white hover:bg-white/10 rounded-full w-12 h-12"
                   onClick={() => setSelectedImageIndex(null)}
                 >
-                  <X className="w-8 h-8" />
+                  <X className="w-6 h-6" />
                 </Button>
 
-                {/* Navigasyon Butonları */}
+                {/* Navigation Buttons */}
                 {filteredImages.length > 1 && (
                   <>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="hidden md:flex absolute left-6 z-50 text-white/50 hover:text-[#8AD7D6] hover:bg-white/5 rounded-full w-16 h-16 transition-all hover:scale-110"
+                      className="hidden md:flex absolute left-6 z-50 text-white/70 hover:text-white hover:bg-white/10 rounded-full w-12 h-12"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedImageIndex((selectedImageIndex - 1 + filteredImages.length) % filteredImages.length)
                       }}
                     >
-                      <ChevronLeft className="w-10 h-10" />
+                      <ChevronLeft className="w-8 h-8" />
                     </Button>
 
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="hidden md:flex absolute right-6 z-50 text-white/50 hover:text-[#8AD7D6] hover:bg-white/5 rounded-full w-16 h-16 transition-all hover:scale-110"
+                      className="hidden md:flex absolute right-6 z-50 text-white/70 hover:text-white hover:bg-white/10 rounded-full w-12 h-12"
                       onClick={(e) => {
                          e.stopPropagation();
                          setSelectedImageIndex((selectedImageIndex + 1) % filteredImages.length)
                       }}
                     >
-                      <ChevronRight className="w-10 h-10" />
+                      <ChevronRight className="w-8 h-8" />
                     </Button>
                   </>
                 )}
 
-                {/* Ana Resim */}
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  key={selectedImageIndex}
-                  className="relative w-full h-full p-4 md:p-20 flex items-center justify-center"
-                  onClick={() => setSelectedImageIndex(null)}
+                {/* Main Image */}
+                <div 
+                  className="relative w-full h-full p-4 md:p-12 flex items-center justify-center"
+                  onClick={() => setSelectedImageIndex(null)} // Click outside to close
                 >
-                  <div className="relative w-full h-full max-w-7xl max-h-[80vh]">
+                  <div className="relative w-full h-full max-w-7xl max-h-[85vh]">
                     <Image
+                      key={selectedImageIndex}
                       src={filteredImages[selectedImageIndex].image_url}
                       alt={filteredImages[selectedImageIndex].title || "Galeri"}
                       fill
                       className="object-contain drop-shadow-2xl"
                       priority
-                      quality={95}
+                      quality={90}
                     />
-                  </div>
-                </motion.div>
-
-                {/* Alt Bilgi Çubuğu */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none">
-                  <div className="container mx-auto flex flex-col md:flex-row justify-between items-end gap-4">
-                      <div className="max-w-2xl">
-                        {filteredImages[selectedImageIndex].category && (
-                            <span className="text-[#8AD7D6] text-xs font-bold tracking-widest uppercase mb-2 block">
-                                {filteredImages[selectedImageIndex].category}
-                            </span>
-                        )}
-                        <h2 className={`text-3xl md:text-4xl text-white mb-2 ${playfair.className}`}>
-                            {filteredImages[selectedImageIndex].title}
-                        </h2>
-                        {filteredImages[selectedImageIndex].description && (
-                            <p className="text-stone-300 text-sm md:text-base font-light leading-relaxed">
-                                {filteredImages[selectedImageIndex].description}
-                            </p>
-                        )}
-                      </div>
-                      
-                      <div className="text-stone-500 font-mono text-sm border border-stone-700 px-3 py-1 rounded-full">
-                        {selectedImageIndex + 1} / {filteredImages.length}
-                      </div>
                   </div>
                 </div>
 
+                {/* Bottom Info Bar */}
+                <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-center md:text-left md:flex md:justify-between md:items-end pointer-events-none">
+                  <div className="max-w-3xl">
+                    <h2 className="text-2xl md:text-3xl font-serif text-white mb-2">
+                        {filteredImages[selectedImageIndex].title}
+                    </h2>
+                    {filteredImages[selectedImageIndex].description && (
+                         <p className="text-stone-300 text-sm md:text-base font-light">
+                            {filteredImages[selectedImageIndex].description}
+                         </p>
+                    )}
+                  </div>
+                  <div className="mt-4 md:mt-0 text-stone-500 font-mono text-sm">
+                    {selectedImageIndex + 1} / {filteredImages.length}
+                  </div>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
