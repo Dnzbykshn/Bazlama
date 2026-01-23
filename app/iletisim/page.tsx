@@ -168,16 +168,19 @@ export default function IletisimPage() {
               </div>
 
               {/* Info Cards */}
-              <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100 space-y-8">
-                <h2 className="text-3xl font-serif font-bold mb-6 text-stone-900">İletişim Bilgileri</h2>
+              <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100 space-y-6">
+                <span className="inline-flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-[0.2em] px-4 py-1.5 w-fit">
+                  BİLGİLER
+                </span>
+                <h2 className="text-3xl font-serif font-bold text-stone-900">İletişim Bilgileri</h2>
 
                 <div className="flex items-start gap-6 group">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                     <MapPin className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-bold text-lg mb-1">Adres</h3>
-                    <p className="text-muted-foreground leading-relaxed italic">
+                    <p className="text-stone-600 leading-relaxed">
                       Kızılırmak mah. Vatan cad. 16 D
                       <br />
                       Sivas / 58070
@@ -186,24 +189,24 @@ export default function IletisimPage() {
                 </div>
 
                 <div className="flex items-start gap-6 group">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                     <Phone className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-bold text-lg mb-1">Telefon</h3>
-                    <a href="tel:+905402714040" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                    <a href="tel:+905402714040" className="text-stone-600 hover:text-primary transition-colors text-lg">
                       +90 540 271 40 40
                     </a>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-6 group">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                     <Mail className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-bold text-lg mb-1">E-posta</h3>
-                    <a href="mailto:info@pisikahvalti.com" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                    <a href="mailto:info@pisikahvalti.com" className="text-stone-600 hover:text-primary transition-colors text-lg">
                       info@pisikahvalti.com
                     </a>
                   </div>
@@ -219,13 +222,18 @@ export default function IletisimPage() {
               animate="visible"
               variants={slideInRight}
             >
-              <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100">
-                <h2 className="text-2xl font-serif font-bold mb-2">Bize Yazın</h2>
-                <p className="text-muted-foreground mb-8 italic">Size en kısa sürede dönüş yapacağız.</p>
+              <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-stone-200/50 border border-stone-100 min-h-[680px] flex flex-col">
+                <span className="inline-flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-[0.2em] px-4 py-1.5 mb-4 w-fit">
+                  İLETİŞİM
+                </span>
+                <h2 className="text-3xl font-serif font-bold text-stone-900">Bize Yazın</h2>
+                <p className="text-stone-600 mt-2 mb-8">
+                  Mesajınızı iletin, ekibimiz en kısa sürede dönüş yapsın.
+                </p>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6 flex-1 flex flex-col justify-center">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-base font-medium pl-1">İsim</Label>
+                    <Label htmlFor="name" className="text-sm font-medium text-stone-700">İsim Soyisim</Label>
                     <Input
                       id="name"
                       type="text"
@@ -233,12 +241,12 @@ export default function IletisimPage() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      className="h-12 rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors"
+                      className="h-12 rounded-xl bg-white border-stone-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-base font-medium pl-1">E-posta</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-stone-700">E-posta</Label>
                     <Input
                       id="email"
                       type="email"
@@ -246,12 +254,12 @@ export default function IletisimPage() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       required
-                      className="h-12 rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors"
+                      className="h-12 rounded-xl bg-white border-stone-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-base font-medium pl-1">Mesaj</Label>
+                    <Label htmlFor="message" className="text-sm font-medium text-stone-700">Mesajınız</Label>
                     <Textarea
                       id="message"
                       placeholder="Mesajınızı buraya yazın..."
@@ -259,7 +267,7 @@ export default function IletisimPage() {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       rows={6}
                       required
-                      className="resize-none rounded-xl bg-stone-50 border-stone-200 focus:bg-white transition-colors p-4"
+                      className="resize-none rounded-xl bg-white border-stone-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors p-4"
                     />
                   </div>
 
@@ -284,7 +292,7 @@ export default function IletisimPage() {
               </div>
 
               {/* Map */}
-              <div className="h-80 w-full mt-16 rounded-[2.5rem] overflow-hidden shadow-xl shadow-stone-200/50 border border-stone-100">
+              <div className="h-[420px] w-full mt-16 rounded-[2.5rem] overflow-hidden shadow-xl shadow-stone-200/50 border border-stone-100">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.5!2d28.9784!3d41.0082!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzI5LjUiTiAyOMKwNTgnNDIuMiJF!5e0!3m2!1str!2str!4v1234567890"
                   width="100%"

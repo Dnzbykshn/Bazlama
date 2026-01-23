@@ -322,7 +322,7 @@ export default function BiziTaniyinPage() {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto italic">
             {content.franchise_description}
           </p>
-          <Link href="/bizi-taniyin/franchise">
+          <Link href="/franchise">
             <Button size="lg" className="mt-4">
               {content.franchise_button_text}
             </Button>

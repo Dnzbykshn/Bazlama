@@ -1,15 +1,9 @@
 "use client"
 
-import { ChevronDown, Menu, MessageCircle } from "lucide-react"
+import { Menu, MessageCircle } from "lucide-react"
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -19,6 +13,8 @@ const navLinks = [
   { href: "/menu", label: "Menü" },
   { href: "/galeri", label: "Galeri" },
   { href: "/subeler", label: "Şubeler" },
+  { href: "/bizi-taniyin", label: "Bizi Tanıyın" },
+  { href: "/franchise", label: "Franchise Başvuru" },
   { href: "/iletisim", label: "İletişim" },
 ]
 
@@ -98,26 +94,6 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="text-sm font-medium text-teal-800 hover:text-teal-600 px-5 py-2.5 rounded-full hover:bg-teal-100/80 transition-all duration-300 hover:shadow-sm flex items-center gap-1">
-                Bizi Tanıyın
-                <ChevronDown className="w-4 h-4" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuItem asChild>
-                <Link href="/bizi-taniyin" className="cursor-pointer">
-                  Bizi Tanıyın
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/bizi-taniyin/franchise" className="cursor-pointer">
-                  Franchise Başvuru
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </nav>
 
         {/* --- SAĞ KISIM: İŞLEMLER --- */}
@@ -165,20 +141,6 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
-                  <Link
-                    href="/bizi-taniyin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all"
-                  >
-                    Bizi Tanıyın
-                  </Link>
-                  <Link
-                    href="/bizi-taniyin/franchise"
-                    onClick={() => setMobileMenuOpen(false)} 
-                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all pl-8"
-                  >
-                    Franchise Başvuru
-                  </Link>
                   <Link
                     href="https://wa.me/905402714040"
                     target="_blank"
