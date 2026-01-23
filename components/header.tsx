@@ -35,7 +35,7 @@ export function Header() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed top-6 left-0 right-0 z-[9999] flex justify-center px-4 transition-all duration-300 pointer-events-none`}
+      className={`fixed top-6 left-0 right-0 z-[50] flex justify-center px-4 transition-all duration-300 pointer-events-none`}
     >
       <div className={`
         pointer-events-auto
@@ -141,6 +141,8 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
+               
+                
                   <Link
                     href="/bizi-taniyin"
                     onClick={() => setMobileMenuOpen(false)}
