@@ -1,730 +1,533 @@
 "use client"
 
 import { useState } from "react"
-import { supabase, isSupabaseConfigured } from "@/lib/supabase"
+import Image from "next/image"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useToast } from "@/hooks/use-toast"
-import { Send } from "lucide-react"
-import { motion, type Variants } from "framer-motion"
-import Image from "next/image"
-import Link from "next/link"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { motion } from "framer-motion"
+import { TrendingUp, Users, Store, ArrowRight, ClipboardCheck, PenTool, GraduationCap, PartyPopper, Wallet, ChefHat, Coffee, Utensils, Sun, Wheat, Egg, Milk, Croissant, Sandwich } from "lucide-react"
 
-// Animation variants
-const fadeIn: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-}
-
-const inputClass =
-  "h-12 rounded-xl bg-white border border-[#c8a589] text-[#6f5646] placeholder:text-[#b89a83] focus:border-[#9b7a63] focus:ring-2 focus:ring-[#c8a589]/30 transition-colors"
-const textareaClass =
-  "resize-none rounded-xl bg-white border border-[#c8a589] text-[#6f5646] placeholder:text-[#b89a83] focus:border-[#9b7a63] focus:ring-2 focus:ring-[#c8a589]/30 transition-colors p-4"
-const labelClass = "text-sm font-medium text-[#8f6b52]"
+const accentColor = "#8AD7D6";
 
 export default function FranchisePage() {
   const [formData, setFormData] = useState({
-    // A) BAŞVURU SAHİBİ BİLGİLERİ
-    name: "",
-    phone: "",
+    // A - Kişisel
+    adSoyad: "",
+    telefon: "",
     email: "",
-    city_district: "",
-    birth_year: "",
-    job_status: "",
-    // B) BAYİLİK PLANI
-    target_city: "",
-    location_type: "",
-    location_type_other: "",
-    has_food_beverage_experience: "",
-    experience_description: "",
-    // C) MEKÂN BİLGİLERİ
-    has_location: "",
-    location_area: "",
-    seating_capacity: "",
-    has_outdoor_area: "",
-    // D) YATIRIM VE ZAMANLAMA
-    investment_budget: "",
-    opening_timeline: "",
-    operator_type: "",
-    // E) MOTİVASYON
-    motivation: "",
-    additional_notes: "",
-    // KVKK
-    kvkk_consent: false,
+    ikametIlIlce: "",
+    dogumYili: "",
+    meslek: "",
+    // B - Plan
+    hedefSehir: "",
+    lokasyonTipi: "",
+    tecrube: "",
+    tecrubeAciklama: "",
+    // C - Mekan
+    yerDurumu: "",
+    alanM2: "",
+    kapasite: "",
+    terasVarMi: "",
+    // D - Yatırım
+    butce: "",
+    acilisSuresi: "",
+    isletmeci: "",
+    // E - Motivasyon
+    motivasyon: "",
+    ekNotlar: "",
+    kvkkOnay: false
   })
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!formData.kvkk_consent) {
-      toast({
-        title: "KVKK Onayı Gerekli",
-        description: "Lütfen KVKK onayını işaretleyiniz.",
-        variant: "destructive",
-      })
-      return
+  // Timeline Steps
+  const steps = [
+    {
+      icon: ClipboardCheck,
+      title: "Başvuru & Ön Değerlendirme",
+      desc: "Web sitemiz üzerinden formun doldurulması ve aday ile ilk tanışma toplantısının yapılması."
+    },
+    {
+      icon: TrendingUp,
+      title: "Lokasyon & Fizibilite",
+      desc: "Belirlenen lokasyonun yerinde incelenmesi, detaylı fizibilite raporunun hazırlanması ve onaylanması."
+    },
+    {
+      icon: PenTool,
+      title: "Mimari Proje & Uygulama",
+      desc: "Konsepte uygun mimari projenin çizilmesi ve inşaat sürecinin profesyonel ekiplerce başlatılması."
+    },
+    {
+      icon: GraduationCap,
+      title: "Personel Eğitimi",
+      desc: "İşletme sahibi ve personel için operasyonel ve teorik eğitimlerin merkez şubemizde verilmesi."
+    },
+    {
+      icon: PartyPopper,
+      title: "Büyük Açılış",
+      desc: "Pazarlama desteği ile birlikte şubenin operasyona başlaması ve misafirlerini ağırlaması."
     }
-
-    setLoading(true)
-
-    try {
-      if (!isSupabaseConfigured) {
-        toast({
-          title: "Başvuru gönderildi!",
-          description: "Başvurunuz başarıyla iletildi. (Demo modu - Supabase yapılandırılmamış)",
-        })
-        setFormData({
-          name: "",
-          phone: "",
-          email: "",
-          city_district: "",
-          birth_year: "",
-          job_status: "",
-          target_city: "",
-          location_type: "",
-          location_type_other: "",
-          has_food_beverage_experience: "",
-          experience_description: "",
-          has_location: "",
-          location_area: "",
-          seating_capacity: "",
-          has_outdoor_area: "",
-          investment_budget: "",
-          opening_timeline: "",
-          operator_type: "",
-          motivation: "",
-          additional_notes: "",
-          kvkk_consent: false,
-        })
-        setLoading(false)
-        return
-      }
-
-      const { error } = await supabase.from("franchise_applications").insert([
-        {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          city: formData.city_district,
-          city_district: formData.city_district,
-          birth_year: formData.birth_year || null,
-          job_status: formData.job_status || null,
-          target_city: formData.target_city || null,
-          location_type: formData.location_type || null,
-          has_food_beverage_experience: formData.has_food_beverage_experience === "evet" ? true : formData.has_food_beverage_experience === "hayir" ? false : null,
-          experience_description: formData.experience_description || null,
-          has_location: formData.has_location === "evet" ? true : formData.has_location === "hayir" ? false : formData.has_location === "arastiriyorum" ? null : null,
-          location_area: formData.location_area || null,
-          seating_capacity: formData.seating_capacity || null,
-          has_outdoor_area: formData.has_outdoor_area === "evet" ? true : formData.has_outdoor_area === "hayir" ? false : null,
-          investment_budget: formData.investment_budget || null,
-          opening_timeline: formData.opening_timeline || null,
-          operator_type: formData.operator_type || null,
-          motivation: formData.motivation || null,
-          additional_notes: formData.additional_notes || null,
-          kvkk_consent: formData.kvkk_consent,
-          // Legacy fields for backward compatibility
-          investment_amount: formData.investment_budget || null,
-          experience: formData.experience_description || null,
-          message: formData.motivation || null,
-        },
-      ])
-
-      if (error) throw error
-
-      toast({
-        title: "Başvuru gönderildi!",
-        description: "Bayilik başvurunuz başarıyla iletildi. En kısa sürede size dönüş yapacağız.",
-      })
-
-      // Reset form
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        city_district: "",
-        birth_year: "",
-        job_status: "",
-        target_city: "",
-        location_type: "",
-        location_type_other: "",
-        has_food_beverage_experience: "",
-        experience_description: "",
-        has_location: "",
-        location_area: "",
-        seating_capacity: "",
-        has_outdoor_area: "",
-        investment_budget: "",
-        opening_timeline: "",
-        operator_type: "",
-        motivation: "",
-        additional_notes: "",
-        kvkk_consent: false,
-      })
-    } catch (error: any) {
-      console.error("Error submitting franchise application:", error)
-      toast({
-        title: "Hata oluştu",
-        description: error.message || "Başvuru gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
+  ]
 
   return (
-    <main className="min-h-screen overflow-hidden bg-transparent">
+    <main className="min-h-screen bg-stone-950 font-sans selection:bg-[#8AD7D6] selection:text-stone-900 overflow-x-hidden">
       <Header />
 
-      {/* Hero Image */}
-      <section className="pt-0 -mt-16 sm:-mt-20 lg:-mt-24">
-        <div className="relative w-full h-[460px] sm:h-[640px] lg:h-[820px] overflow-hidden">
+      {/* --- HERO SECTION --- */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
           <Image
-            src="/Szutest-5.jpg"
-            alt="Franchise başvuru görseli"
+            src="/DSC07011.jpg"
+            alt="Franchise Background"
             fill
-            className="object-cover"
+            className="object-cover opacity-60 grayscale-[0.2]"
             priority
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-stone-950/60 via-stone-950/30 to-stone-950" />
         </div>
+
+        <div className="relative z-10 container mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <span className="inline-block px-4 py-1.5 mb-6 border border-[#8AD7D6]/30 rounded-full bg-[#8AD7D6]/10 text-[#8AD7D6] text-sm font-bold tracking-[0.2em] uppercase backdrop-blur-sm">
+              Franchise Fırsatı
+            </span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-8 leading-tight">
+              Geleceğe <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8AD7D6] to-teal-200">
+                Ortak Olun.
+              </span>
+            </h1>
+            <p className="text-stone-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10 font-medium drop-shadow-md">
+              Sadece bir restoran değil, kârlı bir yatırım ve köklü bir kültürün parçası olmaya davetlisiniz.
+              Başarı hikayemizi birlikte büyütelim.
+            </p>
+            <Button
+              onClick={() => document.getElementById('basvuru-formu')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-[#8AD7D6] text-stone-950 hover:bg-[#7AC5C4] text-lg px-10 py-8 rounded-full font-bold transition-all hover:scale-105 shadow-[0_0_30px_-5px_#8AD7D6]"
+            >
+              Hemen Başvurun <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </motion.div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-stone-400"
+        >
+          <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-stone-400 to-transparent mx-auto mb-2" />
+          <span className="text-xs uppercase tracking-widest text-opacity-70">Keşfet</span>
+        </motion.div>
       </section>
-      <section className="py-10 sm:py-12">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-[940px] rounded-[2.5rem] bg-[#4B56B8] text-white px-6 sm:px-10 lg:px-14 py-12 sm:py-14 lg:py-16 shadow-xl min-h-[472px] flex items-center">
-            <div className="w-full text-center">
-              <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-white/80">
-                Şimdi Master Franchise Adımı Atın
-              </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold leading-tight mt-4">
-                Bir Bayilikten Daha Fazlası
-              </h2>
-              <p className="text-base sm:text-lg text-white/90 mt-4 max-w-2xl mx-auto">
-                Pişi Kahvaltı master franchise modeli, sadece ürün satışı değil; bir kültürü,
-                kalite anlayışını ve markayı birlikte yönetme sorumluluğunu ifade eder.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-                <Button asChild className="bg-white text-[#4B56B8] hover:bg-white/90 rounded-full px-8 py-6 text-base">
-                  <Link href="/subeler">Şubelerimiz</Link>
-                </Button>
-                <Button asChild className="bg-white/15 text-white hover:bg-white/25 border border-white/30 rounded-full px-8 py-6 text-base">
-                  <a href="#franchise-form">Başvuru Formuna Git</a>
-                </Button>
-              </div>
-            </div>
+
+      {/* --- STATS SECTION --- */}
+      <section className="py-24 bg-stone-900 relative overflow-hidden">
+
+        {/* Top Neon Line */}
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-[#8AD7D6] shadow-[0_0_15px_1px_#8AD7D6] z-20 opacity-80" />
+
+        {/* Bottom Neon Line */}
+        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[#8AD7D6] shadow-[0_0_15px_1px_#8AD7D6] z-20 opacity-80" />
+
+        {/* Floating Icons - Scattered */}
+        <div className="absolute top-10 left-10 w-24 h-24 opacity-[0.04] -rotate-12 pointer-events-none text-white"><Coffee className="w-full h-full" /></div>
+        <div className="absolute bottom-10 right-20 w-32 h-32 opacity-[0.03] rotate-45 pointer-events-none text-white"><Utensils className="w-full h-full" /></div>
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 opacity-[0.03] rotate-12 pointer-events-none text-white"><Egg className="w-full h-full" /></div>
+        <div className="absolute top-10 right-1/3 w-20 h-20 opacity-[0.03] -rotate-12 pointer-events-none text-white"><Wheat className="w-full h-full" /></div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 md:gap-12 text-center divide-y divide-white/10 md:divide-y-0 md:divide-x">
+            {[
+              { icon: Store, value: "12+", label: "Aktif Şube" },
+              { icon: Users, value: "500K+", label: "Yıllık Misafir" },
+              { icon: TrendingUp, value: "%100", label: "Yatırım Geri Dönüşü" }
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="py-12 md:py-0 px-4"
+              >
+                <stat.icon className="w-8 h-8 mx-auto text-[#8AD7D6] mb-4 opacity-80" />
+                <h3 className="text-5xl font-serif text-white mb-2">{stat.value}</h3>
+                <p className="text-stone-400 uppercase tracking-wider text-sm">{stat.label}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
-      <section className="py-8 sm:py-10">
-        <div className="container mx-auto px-4 flex justify-center mt-4 sm:mt-6">
-          <Image
-            src="/country.svg"
-            alt="Ülke görseli"
-            width={640}
-            height={220}
-            className="h-auto w-full max-w-[940px]"
-          />
-        </div>
-      </section>
-      <section className="py-12 sm:py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-[940px]">
-            <div className="rounded-[2.75rem] bg-gradient-to-br from-[#2D3BAA] via-[#4657C7] to-[#5A6EE6] text-white shadow-[0_30px_80px_-40px_rgba(44,59,170,0.8)] px-6 sm:px-10 lg:px-12 py-12 sm:py-14">
-              <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] items-start">
-                <div>
-                  <span className="inline-flex items-center justify-center rounded-full bg-white/15 text-white text-xs sm:text-sm font-semibold px-4 py-1.5 tracking-[0.2em]">
-                    NEDEN PİŞİ KAHVALTI?
-                  </span>
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold leading-tight mt-4">
-                    Neden Bizden Franchise Almalısınız?
-                  </h2>
-                  <p className="text-base sm:text-lg text-white/90 mt-5 max-w-xl">
-                    Güçlü marka kimliği, standartlaştırılmış operasyon modeli ve sürdürülebilir kalite anlayışıyla
-                    yatırımınızı güvenle büyüteceğiniz bir yapı sunuyoruz. Her adımda yanınızda olan
-                    profesyonel ekibimizle uzun soluklu bir ortaklık kurarsınız.
-                  </p>
-                  <div className="mt-6 border-t border-white/20 pt-5 text-sm text-white/80">
-                    Detaylı bilgi için bizimle iletişime geçebilirsiniz.
+
+      {/* --- TIMELINE PROCESS --- */}
+      <section className="py-32 bg-stone-950 relative overflow-hidden">
+        {/* Floating Particles/Ingredients - DENSE */}
+        <div className="absolute top-20 right-10 w-40 h-40 opacity-[0.03] rotate-12 pointer-events-none text-white"><ChefHat className="w-full h-full" /></div>
+        <div className="absolute top-40 left-20 w-24 h-24 opacity-[0.03] -rotate-45 pointer-events-none text-white"><Wheat className="w-full h-full" /></div>
+        <div className="absolute bottom-1/3 right-32 w-32 h-32 opacity-[0.02] rotate-90 pointer-events-none text-white"><Sun className="w-full h-full" /></div>
+        <div className="absolute bottom-20 left-10 w-56 h-56 opacity-[0.03] -rotate-12 pointer-events-none text-white"><Wallet className="w-full h-full" /></div>
+        <div className="absolute top-1/2 right-10 w-20 h-20 opacity-[0.04] rotate-45 pointer-events-none text-white"><Croissant className="w-full h-full" /></div>
+        <div className="absolute bottom-10 left-1/3 w-28 h-28 opacity-[0.03] -rotate-12 pointer-events-none text-white"><Sandwich className="w-full h-full" /></div>
+        <div className="absolute top-10 left-1/3 w-16 h-16 opacity-[0.03] rotate-180 pointer-events-none text-white"><Milk className="w-full h-full" /></div>
+
+        {/* Background Accents */}
+        <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-[#8AD7D6]/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-teal-900/10 rounded-full blur-[120px]" />
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-serif text-white mb-6">Süreç Nasıl İşliyor?</h2>
+            <p className="text-stone-400 max-w-xl mx-auto">Adım adım başarıya giden yolda size rehberlik ediyoruz. Şeffaf, planlı ve profesyonel bir süreç.</p>
+          </div>
+
+          <div className="relative max-w-4xl mx-auto">
+            {/* Vertical Line */}
+            <div className="absolute left-[28px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#8AD7D6]/20 via-[#8AD7D6]/50 to-[#8AD7D6]/20 md:-translate-x-1/2" />
+
+            {steps.map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6 }}
+                className={`relative flex items-center gap-8 mb-16 md:mb-24 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+              >
+                {/* Number/Icon Bubble */}
+                <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-14 h-14 rounded-full bg-stone-900 border-4 border-stone-950 shadow-[0_0_0_4px_rgba(138,215,214,0.2)] z-20 flex items-center justify-center">
+                  <step.icon className="w-6 h-6 text-[#8AD7D6]" />
+                </div>
+
+                {/* Content Box */}
+                <div className={`ml-20 md:ml-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16 md:text-left'}`}>
+                  <div className="bg-stone-900/50 p-6 rounded-2xl border border-white/5 hover:border-[#8AD7D6]/30 transition-colors duration-300 relative group overflow-hidden">
+                    {/* Hover Glow */}
+                    <div className="absolute -right-10 -top-10 w-24 h-24 bg-[#8AD7D6]/10 rounded-full blur-xl group-hover:bg-[#8AD7D6]/20 transition-all" />
+
+                    <span className="text-[#8AD7D6] text-xs font-bold tracking-widest uppercase mb-2 block">ADIM 0{index + 1}</span>
+                    <h3 className="text-xl font-serif text-white mb-3">{step.title}</h3>
+                    <p className="text-stone-400 text-sm leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
-                <div className="grid gap-4">
-                  {[
-                    {
-                      title: "Güçlü Marka ve Sadık Müşteri",
-                      text: "Lezzet ve hizmet kalitesiyle güçlü bir marka algısı oluşturur; sadık müşteri kitlesiyle hızlı geri dönüş sağlar."
-                    },
-                    {
-                      title: "Standart ve Ölçeklenebilir Operasyon",
-                      text: "Kurulumdan işletmeye kadar standart süreçlerle verimli ve sürdürülebilir operasyon kurar."
-                    },
-                    {
-                      title: "Eğitim ve Sürekli Destek",
-                      text: "Açılış öncesi/sonrası eğitim, saha desteği ve pazarlama rehberliği sunar."
-                    },
-                    {
-                      title: "Rekabetçi Yatırım ve Karlılık",
-                      text: "Optimum yatırım maliyeti, doğru lokasyon desteği ve menü stratejileriyle kârlı model sağlar."
-                    }
-                  ].map((item) => (
-                    <div
-                      key={item.title}
-                      className="rounded-2xl bg-white/10 border border-white/15 px-5 py-5 backdrop-blur"
-                    >
-                      <h3 className="text-base sm:text-lg font-semibold mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm sm:text-base text-white/85 leading-relaxed">
-                        {item.text}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Header */}
-      <section className="pt-28 pb-12 px-4" id="franchise-form">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
-          className="container mx-auto text-center"
-        >
-          <span className="inline-flex items-center justify-center py-1.5 px-4 rounded-full bg-[#f7efe7] text-[#9b7a63] text-xs sm:text-sm font-semibold tracking-[0.15em] mb-5">
-            İş Fırsatı
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#6f5646]">
-            Franchise Başvuru Formu
-          </h1>
-          <p className="text-lg sm:text-xl text-[#8f6b52] font-light max-w-2xl mx-auto mt-4">
-            Pişi Kahvaltı franchise süreci için ön başvuru
-          </p>
-          <p className="text-sm text-[#a07e66] max-w-2xl mx-auto mt-2">
-            Lütfen bilgilerinizi eksiksiz paylaşın. Başvurunuz değerlendirme sürecine alınacaktır.
-          </p>
-        </motion.div>
+      {/* --- APPLICATION FORM (Light / Teal Modern) --- */}
+      <section id="basvuru-formu" className="py-24 relative overflow-hidden bg-gradient-to-br from-[#e0f2f1] via-stone-50 to-[#ccfbf1] border-t-0">
+
+        {/* Neon Separator Line */}
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-[#8AD7D6] shadow-[0_0_20px_2px_#8AD7D6] z-50 opacity-100" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-[2px] bg-gradient-to-r from-transparent via-[#8AD7D6] to-transparent shadow-[0_0_30px_#8AD7D6] z-50 opacity-80" />
+
+        {/* Light Mode Floating Elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-white/40 rounded-full blur-3xl pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#8AD7D6]/20 rounded-full blur-[100px] pointer-events-none translate-x-1/3 translate-y-1/3" />
+
+        <div className="absolute top-20 right-20 w-24 h-24 opacity-[0.05] rotate-12 text-[#022c22] pointer-events-none"><Coffee className="w-full h-full" /></div>
+        <div className="absolute bottom-40 left-10 w-32 h-32 opacity-[0.05] -rotate-12 text-[#022c22] pointer-events-none"><Utensils className="w-full h-full" /></div>
+
+        <div className="container mx-auto px-6 max-w-4xl relative z-10">
+
+          <div className="text-center mb-16">
+            <span className="bg-white px-6 py-2 rounded-full text-[#8AD7D6] font-bold tracking-[0.2em] uppercase text-xs mb-4 inline-block shadow-sm">Başvuru Formu</span>
+            <h2 className="text-4xl md:text-5xl font-serif text-[#022c22] mb-6">Bayilik Ön Başvurusu</h2>
+            <p className="text-stone-600 text-lg max-w-2xl mx-auto">Lütfen aşağıdaki formu eksiksiz doldurunuz. Başvurunuz ön değerlendirmeye alınacaktır.</p>
+          </div>
+
+          <form className="space-y-12">
+
+            {/* Section A: Başvuru Sahibi Bilgileri */}
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
+
+              <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
+                <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">A</span>
+                Başvuru Sahibi Bilgileri
+              </h3>
+              <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Ad Soyad</Label>
+                  <Input
+                    value={formData.adSoyad} onChange={(e) => setFormData({ ...formData, adSoyad: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Telefon</Label>
+                  <Input
+                    type="tel"
+                    value={formData.telefon} onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">E-Posta</Label>
+                  <Input
+                    type="email"
+                    value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">İl / İlçe (İkamet)</Label>
+                  <Input
+                    value={formData.ikametIlIlce} onChange={(e) => setFormData({ ...formData, ikametIlIlce: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Doğum Yılı (Opsiyonel)</Label>
+                  <Input
+                    value={formData.dogumYili} onChange={(e) => setFormData({ ...formData, dogumYili: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Meslek / Mevcut İş Durumu</Label>
+                  <Select onValueChange={(val) => setFormData({ ...formData, meslek: val })}>
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                      <SelectValue placeholder="Seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-stone-200">
+                      <SelectItem value="calisan">Çalışan</SelectItem>
+                      <SelectItem value="isletme_sahibi">İşletme Sahibi</SelectItem>
+                      <SelectItem value="yatirimci">Yatırımcı</SelectItem>
+                      <SelectItem value="diger">Diğer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Section B: Bayilik Planı */}
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
+              <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
+                <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">B</span>
+                Bayilik Planı
+              </h3>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Bayilik açmayı düşündüğünüz şehir / ilçe</Label>
+                  <Input
+                    value={formData.hedefSehir} onChange={(e) => setFormData({ ...formData, hedefSehir: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Hedef Lokasyon Tipi</Label>
+                  <Select onValueChange={(val) => setFormData({ ...formData, lokasyonTipi: val })}>
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                      <SelectValue placeholder="Seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-stone-200">
+                      <SelectItem value="cadde">Cadde</SelectItem>
+                      <SelectItem value="avm">AVM</SelectItem>
+                      <SelectItem value="islek">İşlek Bölge</SelectItem>
+                      <SelectItem value="diger">Diğer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Daha önce gıda & içecek sektöründe işletmecilik yaptınız mı?</Label>
+                  <Select onValueChange={(val) => setFormData({ ...formData, tecrube: val })}>
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                      <SelectValue placeholder="Seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-stone-200">
+                      <SelectItem value="evet">Evet</SelectItem>
+                      <SelectItem value="hayir">Hayır</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Varsa Açıklama</Label>
+                  <Textarea
+                    value={formData.tecrubeAciklama} onChange={(e) => setFormData({ ...formData, tecrubeAciklama: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 min-h-[80px] focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl"
+                    placeholder="Deneyimlerinizden kısaca bahsediniz..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section C: Mekân Bilgileri */}
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
+              <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
+                <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">C</span>
+                Mekân Bilgileri
+              </h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2 md:col-span-2">
+                  <Label className="text-stone-700 font-semibold">Uygun bir yeriniz var mı?</Label>
+                  <Select onValueChange={(val) => setFormData({ ...formData, yerDurumu: val })}>
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                      <SelectValue placeholder="Durum Seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-stone-200">
+                      <SelectItem value="evet">Evet</SelectItem>
+                      <SelectItem value="hayir">Hayır</SelectItem>
+                      <SelectItem value="arastiriyorum">Araştırıyorum</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Yaklaşık Alan (m²)</Label>
+                  <Input
+                    value={formData.alanM2} onChange={(e) => setFormData({ ...formData, alanM2: e.target.value })}
+                    type="number"
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Tahmini Oturma Kapasitesi</Label>
+                  <Input
+                    value={formData.kapasite} onChange={(e) => setFormData({ ...formData, kapasite: e.target.value })}
+                    type="number"
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label className="text-stone-700 font-semibold">Açık Alan / Teras var mı?</Label>
+                  <Select onValueChange={(val) => setFormData({ ...formData, terasVarMi: val })}>
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                      <SelectValue placeholder="Seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-stone-200">
+                      <SelectItem value="evet">Evet</SelectItem>
+                      <SelectItem value="hayir">Hayır</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Section D: Yatırım ve Zamanlama */}
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
+              <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
+                <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">D</span>
+                Yatırım ve Zamanlama
+              </h3>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Tahmini Yatırım Bütçesi</Label>
+                  <Select onValueChange={(val) => setFormData({ ...formData, butce: val })}>
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                      <SelectValue placeholder="Bütçe Aralığı" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-stone-200">
+                      <SelectItem value="3m-5m">3.000.000 - 5.000.000 TL</SelectItem>
+                      <SelectItem value="5m-7m">5.000.000 - 7.000.000 TL</SelectItem>
+                      <SelectItem value="7m+">7.000.000 TL ve üzeri</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Açılış Hedef Süresi</Label>
+                  <Select onValueChange={(val) => setFormData({ ...formData, acilisSuresi: val })}>
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                      <SelectValue placeholder="Süre Seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-stone-200">
+                      <SelectItem value="0-3">0-3 ay</SelectItem>
+                      <SelectItem value="3-6">3-6 ay</SelectItem>
+                      <SelectItem value="6-12">6-12 ay</SelectItem>
+                      <SelectItem value="belirsiz">Belirsiz</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Bayiliği kim işletecek?</Label>
+                  <Select onValueChange={(val) => setFormData({ ...formData, isletmeci: val })}>
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                      <SelectValue placeholder="Seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-stone-200">
+                      <SelectItem value="kendim">Kendim</SelectItem>
+                      <SelectItem value="ortak">Ortak</SelectItem>
+                      <SelectItem value="profesyonel">Profesyonel Yönetici</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Section E: Motivasyon */}
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
+              <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
+                <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">E</span>
+                Motivasyon
+              </h3>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Neden bu bayiliği almak istiyorsunuz?</Label>
+                  <Textarea
+                    value={formData.motivasyon} onChange={(e) => setFormData({ ...formData, motivasyon: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 min-h-[120px] focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl p-4"
+                    placeholder="Motivasyonunuzu açıklayınız..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-700 font-semibold">Ek Notlar</Label>
+                  <Textarea
+                    value={formData.ekNotlar} onChange={(e) => setFormData({ ...formData, ekNotlar: e.target.value })}
+                    className="bg-stone-50 border-stone-200 text-stone-900 min-h-[100px] focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl p-4"
+                    placeholder="Varsa eklemek istedikleriniz..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* KVKK & Submit */}
+            <div className="space-y-8 pt-6 border-t border-stone-200/50">
+              <div className="flex items-start gap-3 bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+                <input
+                  type="checkbox"
+                  id="kvkk"
+                  checked={formData.kvkkOnay}
+                  onChange={(e) => setFormData({ ...formData, kvkkOnay: e.target.checked })}
+                  className="mt-1 w-5 h-5 rounded border-stone-300 text-[#00695c] focus:ring-[#00695c]"
+                />
+                <Label htmlFor="kvkk" className="text-stone-600 text-sm leading-relaxed cursor-pointer">
+                  <span className="text-[#022c22] font-bold">KVKK ONAYI:</span> 6698 sayılı KVKK kapsamında kişisel verilerimin işlenmesini kabul ediyorum.
+                </Label>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-6">
+                <div className="text-stone-500 font-serif text-sm opacity-60">
+                  {new Date().toLocaleDateString('tr-TR')} tarihinde elektronik olarak imzalanmıştır.
+                </div>
+                <Button className="w-full md:w-auto h-16 px-12 bg-[#022c22] text-white hover:bg-[#034435] font-bold text-lg rounded-2xl shadow-xl transition-all hover:scale-[1.02]">
+                  Başvuruyu Tamamla
+                </Button>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
       </section>
 
-      <div className="container mx-auto px-4 pb-24 max-w-[940px]">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
-        >
-          <div className="bg-white rounded-[2rem] border border-[#f2e7dc] shadow-[0_20px_60px_-30px_rgba(111,86,70,0.35)] p-8 md:p-12 relative overflow-hidden">
-            <div className="absolute inset-x-8 top-0 h-1.5 rounded-b-full bg-gradient-to-r from-[#d8b79c] via-[#c8a589] to-[#b88f73]" />
-            <form onSubmit={handleSubmit} className="space-y-10">
-              {/* A) BAŞVURU SAHİBİ BİLGİLERİ */}
-              <div className="space-y-6 border-b border-[#edd9c8] pb-8">
-                <h2 className="text-2xl font-serif font-bold text-[#9b7a63]">A) BAŞVURU SAHİBİ BİLGİLERİ</h2>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="name" className={labelClass}>Ad Soyad *</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Adınız Soyadınız"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className={labelClass}>Telefon *</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="0540 271 40 40"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    required
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className={labelClass}>E-Posta *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="ornek@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="city_district" className={labelClass}>İl / İlçe *</Label>
-                  <Input
-                    id="city_district"
-                    type="text"
-                    placeholder="İstanbul / Kadıköy"
-                    value={formData.city_district}
-                    onChange={(e) => setFormData({ ...formData, city_district: e.target.value })}
-                    required
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="birth_year" className={labelClass}>Doğum Yılı (Opsiyonel)</Label>
-                  <Input
-                    id="birth_year"
-                    type="text"
-                    placeholder="1990"
-                    value={formData.birth_year}
-                    onChange={(e) => setFormData({ ...formData, birth_year: e.target.value })}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <Label className={labelClass}>Meslek / Mevcut İş Durumu *</Label>
-                  <RadioGroup
-                    value={formData.job_status}
-                    onValueChange={(value) => setFormData({ ...formData, job_status: value })}
-                    required
-                    className="space-y-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="calisan" id="calisan" />
-                      <Label htmlFor="calisan" className="cursor-pointer font-normal">Çalışan</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="isletme_sahibi" id="isletme_sahibi" />
-                      <Label htmlFor="isletme_sahibi" className="cursor-pointer font-normal">İşletme Sahibi</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="yatirimci" id="yatirimci" />
-                      <Label htmlFor="yatirimci" className="cursor-pointer font-normal">Yatırımcı</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="diger" id="diger" />
-                      <Label htmlFor="diger" className="cursor-pointer font-normal">Diğer</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
-
-              {/* B) BAYİLİK PLANI */}
-              <div className="space-y-6 border-b border-[#edd9c8] pb-8">
-                <h2 className="text-2xl font-serif font-bold text-[#9b7a63]">B) BAYİLİK PLANI</h2>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="target_city" className={labelClass}>Bayilik açmayı düşündüğünüz şehir / ilçe *</Label>
-                  <Input
-                    id="target_city"
-                    type="text"
-                    placeholder="İstanbul / Kadıköy"
-                    value={formData.target_city}
-                    onChange={(e) => setFormData({ ...formData, target_city: e.target.value })}
-                    required
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <Label className={labelClass}>Hedef lokasyon tipi *</Label>
-                  <RadioGroup
-                    value={formData.location_type}
-                    onValueChange={(value) => setFormData({ ...formData, location_type: value, location_type_other: "" })}
-                    required
-                    className="space-y-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="cadde" id="cadde" />
-                      <Label htmlFor="cadde" className="cursor-pointer font-normal">Cadde</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="avm" id="avm" />
-                      <Label htmlFor="avm" className="cursor-pointer font-normal">AVM</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="islek_bolge" id="islek_bolge" />
-                      <Label htmlFor="islek_bolge" className="cursor-pointer font-normal">İşlek bölge</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="diger" id="lokasyon_diger" />
-                      <Label htmlFor="lokasyon_diger" className="cursor-pointer font-normal">Diğer</Label>
-                    </div>
-                  </RadioGroup>
-                  {formData.location_type === "diger" && (
-                    <Input
-                      placeholder="Diğer lokasyon tipi"
-                      value={formData.location_type_other}
-                      onChange={(e) => setFormData({ ...formData, location_type_other: e.target.value })}
-                      className={`${inputClass} mt-2`}
-                    />
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  <Label className={labelClass}>Daha önce gıda & içecek sektöründe işletmecilik yaptınız mı? *</Label>
-                  <RadioGroup
-                    value={formData.has_food_beverage_experience}
-                    onValueChange={(value) => setFormData({ ...formData, has_food_beverage_experience: value, experience_description: value === "hayir" ? "" : formData.experience_description })}
-                    required
-                    className="space-y-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="evet" id="deneyim_evet" />
-                      <Label htmlFor="deneyim_evet" className="cursor-pointer font-normal">Evet</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="hayir" id="deneyim_hayir" />
-                      <Label htmlFor="deneyim_hayir" className="cursor-pointer font-normal">Hayır</Label>
-                    </div>
-                  </RadioGroup>
-                  {formData.has_food_beverage_experience === "evet" && (
-                    <div className="mt-3">
-                      <Label htmlFor="experience_description" className={labelClass}>Varsa açıklama</Label>
-                      <Textarea
-                        id="experience_description"
-                        placeholder="Deneyiminizi detaylı olarak açıklayınız..."
-                        value={formData.experience_description}
-                        onChange={(e) => setFormData({ ...formData, experience_description: e.target.value })}
-                        rows={4}
-                        className={`${textareaClass} mt-2`}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* C) MEKÂN BİLGİLERİ */}
-              <div className="space-y-6 border-b border-[#edd9c8] pb-8">
-                <h2 className="text-2xl font-serif font-bold text-[#9b7a63]">C) MEKÂN BİLGİLERİ</h2>
-                
-                <div className="space-y-3">
-                  <Label className={labelClass}>Uygun bir yeriniz var mı? *</Label>
-                  <RadioGroup
-                    value={formData.has_location}
-                    onValueChange={(value) => setFormData({ ...formData, has_location: value })}
-                    required
-                    className="space-y-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="evet" id="yer_evet" />
-                      <Label htmlFor="yer_evet" className="cursor-pointer font-normal">Evet</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="hayir" id="yer_hayir" />
-                      <Label htmlFor="yer_hayir" className="cursor-pointer font-normal">Hayır</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="arastiriyorum" id="yer_arastiriyorum" />
-                      <Label htmlFor="yer_arastiriyorum" className="cursor-pointer font-normal">Araştırıyorum</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="location_area" className={labelClass}>Yaklaşık alan (m²)</Label>
-                  <Input
-                    id="location_area"
-                    type="text"
-                    placeholder="Örn: 150"
-                    value={formData.location_area}
-                    onChange={(e) => setFormData({ ...formData, location_area: e.target.value })}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="seating_capacity" className={labelClass}>Tahmini oturma kapasitesi</Label>
-                  <Input
-                    id="seating_capacity"
-                    type="text"
-                    placeholder="Örn: 50"
-                    value={formData.seating_capacity}
-                    onChange={(e) => setFormData({ ...formData, seating_capacity: e.target.value })}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <Label className={labelClass}>Açık alan / teras var mı? *</Label>
-                  <RadioGroup
-                    value={formData.has_outdoor_area}
-                    onValueChange={(value) => setFormData({ ...formData, has_outdoor_area: value })}
-                    required
-                    className="space-y-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="evet" id="teras_evet" />
-                      <Label htmlFor="teras_evet" className="cursor-pointer font-normal">Evet</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="hayir" id="teras_hayir" />
-                      <Label htmlFor="teras_hayir" className="cursor-pointer font-normal">Hayır</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
-
-              {/* D) YATIRIM VE ZAMANLAMA */}
-              <div className="space-y-6 border-b border-[#edd9c8] pb-8">
-                <h2 className="text-2xl font-serif font-bold text-[#9b7a63]">D) YATIRIM VE ZAMANLAMA</h2>
-                
-                <div className="space-y-3">
-                  <Label className={labelClass}>Tahmini yatırım bütçesi *</Label>
-                  <RadioGroup
-                    value={formData.investment_budget}
-                    onValueChange={(value) => setFormData({ ...formData, investment_budget: value })}
-                    required
-                    className="space-y-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="3-5m" id="butce_3-5" />
-                      <Label htmlFor="butce_3-5" className="cursor-pointer font-normal">3.000.000 – 5.000.000 TL</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="5-7m" id="butce_5-7" />
-                      <Label htmlFor="butce_5-7" className="cursor-pointer font-normal">5.000.000 – 7.000.000 TL</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="7m+" id="butce_7+" />
-                      <Label htmlFor="butce_7+" className="cursor-pointer font-normal">7.000.000 TL ve üzeri</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-3">
-                  <Label className={labelClass}>Açılış hedef süresi *</Label>
-                  <RadioGroup
-                    value={formData.opening_timeline}
-                    onValueChange={(value) => setFormData({ ...formData, opening_timeline: value })}
-                    required
-                    className="space-y-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="0-3ay" id="sure_0-3" />
-                      <Label htmlFor="sure_0-3" className="cursor-pointer font-normal">0–3 ay</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="3-6ay" id="sure_3-6" />
-                      <Label htmlFor="sure_3-6" className="cursor-pointer font-normal">3–6 ay</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="6-12ay" id="sure_6-12" />
-                      <Label htmlFor="sure_6-12" className="cursor-pointer font-normal">6–12 ay</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="belirsiz" id="sure_belirsiz" />
-                      <Label htmlFor="sure_belirsiz" className="cursor-pointer font-normal">Belirsiz</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-3">
-                  <Label className={labelClass}>Bayiliği kim işletecek? *</Label>
-                  <RadioGroup
-                    value={formData.operator_type}
-                    onValueChange={(value) => setFormData({ ...formData, operator_type: value })}
-                    required
-                    className="space-y-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="kendim" id="isletme_kendim" />
-                      <Label htmlFor="isletme_kendim" className="cursor-pointer font-normal">Kendim</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="ortak" id="isletme_ortak" />
-                      <Label htmlFor="isletme_ortak" className="cursor-pointer font-normal">Ortak</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="profesyonel_yonetici" id="isletme_yonetici" />
-                      <Label htmlFor="isletme_yonetici" className="cursor-pointer font-normal">Profesyonel yönetici</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
-
-              {/* E) MOTİVASYON */}
-              <div className="space-y-6 border-b border-[#edd9c8] pb-8">
-                <h2 className="text-2xl font-serif font-bold text-[#9b7a63]">E) MOTİVASYON</h2>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="motivation" className={labelClass}>Neden bu bayiliği almak istiyorsunuz? *</Label>
-                  <Textarea
-                    id="motivation"
-                    placeholder="Motivasyonunuzu detaylı olarak açıklayınız..."
-                    value={formData.motivation}
-                    onChange={(e) => setFormData({ ...formData, motivation: e.target.value })}
-                    required
-                    rows={5}
-                    className={textareaClass}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="additional_notes" className={labelClass}>Ek notlar</Label>
-                  <Textarea
-                    id="additional_notes"
-                    placeholder="Eklemek istediğiniz notlar..."
-                    value={formData.additional_notes}
-                    onChange={(e) => setFormData({ ...formData, additional_notes: e.target.value })}
-                    rows={4}
-                    className={textareaClass}
-                  />
-                </div>
-              </div>
-
-              {/* KVKK ONAYI */}
-              <div className="space-y-4 border border-[#edd9c8] rounded-2xl p-6 md:p-8">
-                <h2 className="text-2xl font-serif font-bold text-[#9b7a63]">KVKK ONAYI</h2>
-                <p className="text-sm text-[#8f6b52]">
-                  6698 sayılı KVKK kapsamında kişisel verilerimin işlenmesini kabul ediyorum.
-                </p>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="kvkk_consent"
-                    checked={formData.kvkk_consent}
-                    onCheckedChange={(checked) => setFormData({ ...formData, kvkk_consent: checked === true })}
-                    required
-                  />
-                  <Label htmlFor="kvkk_consent" className="cursor-pointer font-normal">
-                    Kabul Ediyorum *
-                  </Label>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full h-12 rounded-xl text-lg font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
-                disabled={loading || !formData.kvkk_consent}
-              >
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-                    Gönderiliyor...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5 mr-3" />
-                    Başvuru Gönder
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
-        </motion.div>
-      </div>
       <Footer />
     </main>
   )
