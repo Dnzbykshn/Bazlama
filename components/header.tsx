@@ -142,7 +142,6 @@ export function Header() {
                     </Link>
                   ))}
                   <Link
-<<<<<<< HEAD
                     href="/bizi-taniyin"
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all"
@@ -157,8 +156,6 @@ export function Header() {
                     Franchise Başvuru
                   </Link>
                   <Link
-=======
->>>>>>> f083da3bb065675b97e8a758de7616761f8072e1
                     href="https://wa.me/905402714040"
                     target="_blank"
                     rel="noopener noreferrer"

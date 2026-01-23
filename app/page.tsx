@@ -14,7 +14,7 @@ export default function Home() {
       <AboutSection />
       <MenuCTASection />
       <GalleryPreview />
-      <CTASection />
+      {/* <CTASection /> */}
       <Footer />
     </main>
   );
