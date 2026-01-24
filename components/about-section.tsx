@@ -5,7 +5,7 @@ import Image from "next/image";
 
 // Logonun tam rengi
 const accentColor = "#8AD7D6";
-//deneme 123
+
 export function AboutSection() {
   return (
     // mt-[-1px] Hero ile aradaki olası beyaz boşluğu kapatır
