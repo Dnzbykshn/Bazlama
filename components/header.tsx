@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-
+import { poppins } from "@/lib/fonts"
 const navLinks = [
   { href: "/", label: "Anasayfa" },
   { href: "/menu", label: "Menü" },
@@ -64,7 +64,7 @@ export function Header() {
             />
           </div>
           {/* Masaüstünde logo yanında yazı görünsün, mobilde gizlensin (çünkü ortaya alacağız) */}
-          <span className="text-xl font-serif font-bold text-foreground hidden lg:block tracking-wide">
+          <span className="font-poppins text-2xl font-bold text-teal-900 whitespace-nowrap text-foreground hidden lg:block tracking-wide">
             Pişi Kahvaltı
           </span>
         </Link>
@@ -72,7 +72,7 @@ export function Header() {
         {/* --- MOBİL İÇİN ORTA ALAN: MARKA İSMİ --- */}
         {/* lg:hidden -> Sadece mobilde görünür. Absolute center -> Tam ortadadır. */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:hidden z-10">
-          <Link href="/" className="font-serif text-lg font-bold text-teal-900 tracking-wide whitespace-nowrap">
+          <Link href="/" className="font-poppins text-3xl font-bold text-teal-900 tracking-wide whitespace-nowrap">
              Pişi Kahvaltı
           </Link>
           
@@ -103,7 +103,7 @@ export function Header() {
             href="https://wa.me/905402714040"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-[#8AD7D6] hover:bg-[#20BA5A] text-white font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-[#25D366]/30"
+            className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-[#8AD7D6] hover:bg-[#20baba] text-white font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-[#25D366]/30"
           >
             <MessageCircle className="w-4 h-4" fill="white" />
             WhatsApp
@@ -148,7 +148,7 @@ export function Header() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 text-lg font-medium text-white bg-[#25D366] hover:bg-[#20BA5A] px-4 py-3 rounded-2xl transition-all mt-2"
+                    className="flex items-center gap-2 text-lg font-medium text-white bg-[#8AD7D6] hover:bg-[#20baba] px-4 py-3 rounded-2xl transition-all mt-2"
                   >
                     <MessageCircle className="w-5 h-5" fill="white" />
                     WhatsApp

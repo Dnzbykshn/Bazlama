@@ -36,7 +36,11 @@ export function GalleryPreview() {
           className="inline-flex items-center gap-2 bg-stone-50 border border-stone-100 px-4 py-2 rounded-full mb-6 shadow-sm"
         >
           <Instagram className="w-4 h-4 text-[#E1306C]" />
-          <span className="text-xs font-bold uppercase tracking-widest text-stone-500">@pisikahvalti</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-stone-500">
+           <Link href="https://www.instagram.com/pisikahvaltisivas/" target="_blank" rel="noopener noreferrer"> 
+            @pisikahvalti
+            </Link>
+            </span>
         </motion.div>
         
         <motion.h2 
@@ -116,11 +120,11 @@ export function GalleryPreview() {
          <Link href="/galeri">
             <Button 
                 size="lg" 
-                className="group bg-white text-stone-900 border-2 px-10 py-7 text-lg rounded-full shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1"
+                className="group bg-white text-stone-900 border-2 px-10 py-7 hover:bg-[#f5f8f8] text-lg rounded-full shadow-xl transition-all hover:-translate-y-1"
                 style={{ borderColor: accentColor }}
             >
                 <span className="font-bold">Tüm Fotoğrafları Gör</span>
-                <div className="ml-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:text-white" style={{ backgroundColor: accentColor + "30", color: accentColor }}>
+                <div className="ml-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors  group-hover:text-white" style={{ backgroundColor: accentColor + "30", color: accentColor }}>
                    <ArrowRight className="w-5 h-5" />
                 </div>
             </Button>

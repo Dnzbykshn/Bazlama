@@ -111,7 +111,7 @@ export default function FranchisePage() {
             </p>
             <Button
               onClick={() => document.getElementById('basvuru-formu')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-[#8AD7D6] text-stone-950 hover:bg-[#7AC5C4] text-lg px-10 py-8 rounded-full font-bold transition-all hover:scale-105 shadow-[0_0_30px_-5px_#8AD7D6]"
+              className="bg-[#8AD7D6] text-white hover:bg-[#7AC5C4] text-lg px-10 py-8 rounded-full font-bold transition-all hover:scale-105 shadow-[0_0_30px_-5px_#8AD7D6]"
             >
               Hemen Başvurun <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
@@ -224,24 +224,28 @@ export default function FranchisePage() {
         </div>
       </section>
 
-      {/* --- APPLICATION FORM (Light / Teal Modern) --- */}
-      <section id="basvuru-formu" className="py-24 relative overflow-hidden bg-gradient-to-br from-[#e0f2f1] via-stone-50 to-[#ccfbf1] border-t-0">
+      {/* --- APPLICATION FORM (Light / Teal Modern / Footer Fix) --- */}
+    {/* --- APPLICATION FORM (Light / Teal Modern / Footer Fix) --- */}
+      {/* DEĞİŞİKLİK: Gradient beyaza tam otursun diye ayarlandı */}
+      <section id="basvuru-formu" className="pt-24 pb-48 relative overflow-hidden bg-gradient-to-b from-[#e0f2f1] via-[#f0fdfd] to-white border-t-0">
 
         {/* Neon Separator Line */}
         <div className="absolute top-0 left-0 w-full h-[2px] bg-[#8AD7D6] shadow-[0_0_20px_2px_#8AD7D6] z-50 opacity-100" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-[2px] bg-gradient-to-r from-transparent via-[#8AD7D6] to-transparent shadow-[0_0_30px_#8AD7D6] z-50 opacity-80" />
 
         {/* Light Mode Floating Elements */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-white/40 rounded-full blur-3xl pointer-events-none -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#8AD7D6]/20 rounded-full blur-[100px] pointer-events-none translate-x-1/3 translate-y-1/3" />
+        {/* Sol üstteki beyaz ışık duruyor */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-white/60 rounded-full blur-3xl pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+        
+        {/* DÜZELTME: Sağ alttaki mavilik yapan yuvarlak (blur) KALDIRILDI. Artık alt kısım tertemiz beyaz. */}
 
         <div className="absolute top-20 right-20 w-24 h-24 opacity-[0.05] rotate-12 text-[#022c22] pointer-events-none"><Coffee className="w-full h-full" /></div>
-        <div className="absolute bottom-40 left-10 w-32 h-32 opacity-[0.05] -rotate-12 text-[#022c22] pointer-events-none"><Utensils className="w-full h-full" /></div>
+        <div className="absolute bottom-60 left-10 w-32 h-32 opacity-[0.05] -rotate-12 text-[#022c22] pointer-events-none"><Utensils className="w-full h-full" /></div>
 
         <div className="container mx-auto px-6 max-w-4xl relative z-10">
 
           <div className="text-center mb-16">
-            <span className="bg-white px-6 py-2 rounded-full text-[#8AD7D6] font-bold tracking-[0.2em] uppercase text-xs mb-4 inline-block shadow-sm">Başvuru Formu</span>
+            <span className="bg-white px-6 py-2 rounded-full text-[#8AD7D6] font-bold tracking-[0.2em] uppercase text-xs mb-4 inline-block shadow-sm border border-stone-100">Başvuru Formu</span>
             <h2 className="text-4xl md:text-5xl font-serif text-[#022c22] mb-6">Bayilik Ön Başvurusu</h2>
             <p className="text-stone-600 text-lg max-w-2xl mx-auto">Lütfen aşağıdaki formu eksiksiz doldurunuz. Başvurunuz ön değerlendirmeye alınacaktır.</p>
           </div>
@@ -249,7 +253,7 @@ export default function FranchisePage() {
           <form className="space-y-12">
 
             {/* Section A: Başvuru Sahibi Bilgileri */}
-            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-stone-100 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
 
               <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
@@ -312,7 +316,7 @@ export default function FranchisePage() {
             </div>
 
             {/* Section B: Bayilik Planı */}
-            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-stone-100 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
               <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
                 <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">B</span>
@@ -367,7 +371,7 @@ export default function FranchisePage() {
             </div>
 
             {/* Section C: Mekân Bilgileri */}
-            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-stone-100 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
               <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
                 <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">C</span>
@@ -419,7 +423,7 @@ export default function FranchisePage() {
             </div>
 
             {/* Section D: Yatırım ve Zamanlama */}
-            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-stone-100 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
               <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
                 <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">D</span>
@@ -472,7 +476,7 @@ export default function FranchisePage() {
             </div>
 
             {/* Section E: Motivasyon */}
-            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-white/50 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-stone-100 relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#8AD7D6] to-transparent" />
               <h3 className="text-2xl font-serif text-[#022c22] flex items-center gap-3 mb-8">
                 <span className="w-10 h-10 rounded-full bg-[#e0f2f1] text-[#00695c] flex items-center justify-center font-bold text-sm">E</span>
@@ -517,7 +521,7 @@ export default function FranchisePage() {
                 <div className="text-stone-500 font-serif text-sm opacity-60">
                   {new Date().toLocaleDateString('tr-TR')} tarihinde elektronik olarak imzalanmıştır.
                 </div>
-                <Button className="w-full md:w-auto h-16 px-12 bg-[#022c22] text-white hover:bg-[#034435] font-bold text-lg rounded-2xl shadow-xl transition-all hover:scale-[1.02]">
+                <Button className="w-full md:w-auto h-16 px-12 bg-[#8AD7D6] text-white hover:bg-[#7AC5C4] font-bold text-lg rounded-2xl shadow-xl transition-all hover:scale-[1.02]">
                   Başvuruyu Tamamla
                 </Button>
               </div>
@@ -526,7 +530,7 @@ export default function FranchisePage() {
           </form>
 
         </div>
-      </section>
+      </section>  
 
       <Footer />
     </main>

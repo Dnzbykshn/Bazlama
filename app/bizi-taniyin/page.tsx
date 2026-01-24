@@ -163,7 +163,7 @@ export default function BiziTaniyinPage() {
   }
 
   return (
-    <main className={`min-h-screen bg-[#fffcf8] selection:bg-[#8AD7D6] selection:text-white ${inter.className}`}>
+    <main className={`min-h-screen bg-[#ffffff] selection:bg-[#8AD7D6] selection:text-white ${inter.className}`}>
       <Header />
 
       {/* --- HERO SECTION --- */}

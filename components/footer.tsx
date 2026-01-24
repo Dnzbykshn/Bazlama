@@ -3,6 +3,8 @@
 import Link from "next/link"
 import { Facebook, Instagram, Twitter, Phone, MapPin, ArrowUp, Coffee, Wheat, Utensils } from "lucide-react"
 import { motion, Variants } from "framer-motion"
+import Image from "next/image"
+
 
 export function Footer() {
   const scrollToTop = () => {
@@ -67,7 +69,16 @@ export function Footer() {
               <Link href="/" className="flex items-center gap-4 group">
                 {/* Logo Kutusu */}
                 <div className="relative w-16 h-16 bg-[#8AD7D6]/10 rounded-2xl border border-[#8AD7D6]/20 p-3 flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:bg-[#8AD7D6] group-hover:text-[#081e1e] transition-all duration-500">
-                   <span className="text-3xl transition-transform group-hover:scale-110">🥞</span>
+                   <span className="text-3xl transition-transform group-hover:scale-110">
+                   <Image
+                      src="/pisikahvalti-logo.png"
+                      alt="Pişi Kahvaltı Logo"
+                      width={40}
+                      height={40}
+                      className="object-contain"
+                      priority
+                    />
+                   </span>
                 </div>
                 <div>
                   <span className="text-3xl font-serif font-bold text-white tracking-wide block">Pişi Kahvaltı</span>
@@ -83,9 +94,9 @@ export function Footer() {
               {/* Sosyal Medya */}
               <div className="flex gap-3">
                 {[
-                  { icon: Facebook, href: "#", label: "Facebook" },
-                  { icon: Instagram, href: "#", label: "Instagram" },
-                  { icon: Twitter, href: "#", label: "Twitter" }
+                  { icon: Facebook, href: "https://www.facebook.com/pisikahvalticafe", label: "Facebook" },
+                  { icon: Instagram, href: "https://www.instagram.com/pisikahvaltisivas/", label: "Instagram" },
+                  // { icon: Twitter, href: "#", label: "Twitter" }
                 ].map((social) => (
                   <a
                     key={social.label}
@@ -192,8 +203,7 @@ export function Footer() {
             </p>
             
             <div className="flex items-center gap-6">
-              <Link href="/gizlilik" className="hover:text-[#8AD7D6] transition-colors">Gizlilik</Link>
-              <Link href="/kullanim-kosullari" className="hover:text-[#8AD7D6] transition-colors">Kullanım Şartları</Link>
+              <Link href="/gizlilik" className="hover:text-[#8AD7D6] transition-colors">Gizlilik Politikası</Link>
               <button
                 onClick={scrollToTop}
                 className="flex items-center gap-2 text-[#8AD7D6] hover:text-white transition-colors border border-[#8AD7D6]/20 px-4 py-2 rounded-full hover:bg-[#8AD7D6] hover:border-[#8AD7D6]"

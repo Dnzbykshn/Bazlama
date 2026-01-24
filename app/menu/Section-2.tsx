@@ -316,13 +316,13 @@ export function Section2() {
                      className="inline-block mb-8 relative group cursor-pointer z-20"
                    >
                       <div className="absolute inset-0 bg-[#8AD7D6] rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                      <div className="relative bg-gradient-to-br from-[#8AD7D6] to-[#7acaca] text-white px-12 py-4 rounded-full shadow-xl flex items-baseline gap-3 border-[3px] border-white ring-2 ring-[#8AD7D6]/20">
+                      {/* <div className="relative bg-gradient-to-br from-[#8AD7D6] to-[#7acaca] text-white px-12 py-4 rounded-full shadow-xl flex items-baseline gap-3 border-[3px] border-white ring-2 ring-[#8AD7D6]/20">
                           <span className={`text-6xl font-bold ${caveat.className} drop-shadow-sm`}>{menu.price}</span>
                           <div className="flex flex-col items-start leading-none">
                               <span className="text-2xl font-bold">TL</span>
                               <span className="text-sm font-medium opacity-90 tracking-wider uppercase font-sans">Kişi Başı</span>
                           </div>
-                      </div>
+                      </div> */}
                       <Star className="absolute -top-4 -right-4 w-10 h-10 text-yellow-300 fill-yellow-300 drop-shadow-md animate-pulse" />
                    </motion.div>
                 )}

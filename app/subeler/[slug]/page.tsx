@@ -12,11 +12,10 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Clock, Phone, Mail, ArrowLeft, ExternalLink, ChevronLeft, ChevronRight, Store, Compass, Camera, Utensils, Quote } from "lucide-react"
 import { Caveat, Inter, Playfair_Display, Patrick_Hand } from "next/font/google"
 
-// --- FONT AYARLARI (Premium Tema) ---
-// const caveat = Caveat({ subsets: ["latin"], weight: ["700"] }) // Artık pek kullanmıyoruz, daha ciddi durması için
-const patrick = Patrick_Hand({ subsets: ["latin"], weight: ["400"] }) // Samimi açıklamalar için
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700", "800"] }) // Başlıklar için
-const inter = Inter({ subsets: ["latin"] }) // Genel metinler için
+// --- FONT AYARLARI ---
+const patrick = Patrick_Hand({ subsets: ["latin"], weight: ["400"] }) 
+const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700", "800"] }) 
+const inter = Inter({ subsets: ["latin"] }) 
 
 // --- MARKA RENGİ ---
 const accentColor = "#8AD7D6";
@@ -57,7 +56,7 @@ interface BranchGalleryItem {
 // --- ANİMASYONLAR ---
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } // Daha yumuşak bir ease
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
 }
 
 const staggerContainer: Variants = {
@@ -127,7 +126,7 @@ export default function BranchDetailPage() {
     }
   }, [galleryItems.length]);
 
-  // Yükleniyor / Hata Durumları (Premium Tasarım)
+  // Yükleniyor / Hata Durumları
   if (loading) return <LoadingState />;
   if (error || !branch) return <ErrorState error={error} />;
 
@@ -142,7 +141,7 @@ export default function BranchDetailPage() {
     <main className={`min-h-screen bg-[#fffcf8] selection:bg-[#8AD7D6] selection:text-white ${inter.className}`}>
       <Header />
 
-      {/* --- HERO SECTION (Sinematik & Premium) --- */}
+      {/* --- HERO SECTION --- */}
       <section className="relative h-[70vh] min-h-[500px] flex items-end justify-center pb-24 text-center text-white overflow-hidden">
         {/* Arka Plan Resmi */}
         <div className="absolute inset-0 z-0">
@@ -153,7 +152,6 @@ export default function BranchDetailPage() {
                 className="object-cover"
                 priority
             />
-            {/* Daha sofistike bir gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#1c1917] via-[#1c1917]/50 to-black/30 opacity-90"></div>
         </div>
 
@@ -192,15 +190,16 @@ export default function BranchDetailPage() {
         </motion.div>
       </section>
 
-      {/* --- ANA İÇERİK ALANI (Kavisli Geçiş) --- */}
-      <div className="relative z-20 -mt-20 bg-[#fffcf8] rounded-t-[3rem] md:rounded-t-[4rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] px-4 pb-32 overflow-hidden">
-         
-         {/* Çok hafif arka plan dokusu */}
-         <div className="absolute inset-0 opacity-[0.02] pointer-events-none mix-blend-multiply" style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/cream-paper.png")` }}></div>
+      {/* --- ANA İÇERİK ALANI (Kavisli Geçiş & Beyaza Bitiş) --- */}
+      {/* DEĞİŞİKLİK: bg-gradient-to-b eklendi, via-[#fffcf8] ve to-white ile alt kısım beyaza çekildi */}
+      <div className="relative z-20 -mt-20 bg-gradient-to-b from-[#fffcf8] via-[#fffcf8] to-white rounded-t-[3rem] md:rounded-t-[4rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] px-4 pb-32 overflow-hidden">
+          
+          {/* Hafif arka plan dokusu */}
+          <div className="absolute inset-0 opacity-[0.02] pointer-events-none mix-blend-multiply" style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/cream-paper.png")` }}></div>
 
         <div className="container mx-auto pt-16 md:pt-24 space-y-24 max-w-6xl relative z-10">
 
-            {/* --- HİKAYEMİZ (Zarif Kart Tasarımı) --- */}
+            {/* --- HİKAYEMİZ --- */}
             {branch.story && (
             <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="max-w-4xl mx-auto">
                 <div className="bg-white rounded-[3rem] p-10 md:p-16 shadow-xl shadow-stone-200/40 border border-stone-100 relative overflow-hidden">
@@ -211,17 +210,16 @@ export default function BranchDetailPage() {
                             {branch.story}
                         </div>
                     </div>
-                     <Quote className="absolute bottom-8 right-8 w-12 h-12 text-[#8AD7D6]/20" />
+                      <Quote className="absolute bottom-8 right-8 w-12 h-12 text-[#8AD7D6]/20" />
                 </div>
             </motion.section>
             )}
 
-            {/* --- BİLGİ KARTLARI (Premium & Ferah) --- */}
+            {/* --- BİLGİ KARTLARI --- */}
             <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="grid md:grid-cols-2 gap-8 lg:gap-12">
             
                 {/* İletişim Paneli */}
                 <motion.div variants={fadeInUp} className="bg-white rounded-[3rem] p-10 shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-stone-50 relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(138,215,214,0.15)] transition-all duration-500">
-                    {/* Dekoratif Arka Plan İkonu */}
                     <div className="absolute -right-12 -bottom-12 text-stone-100 opacity-70 group-hover:rotate-12 transition-transform duration-700">
                         <Compass size={200} strokeWidth={0.5} />
                     </div>
@@ -250,8 +248,7 @@ export default function BranchDetailPage() {
 
                 {/* Çalışma Saatleri Paneli */}
                 <motion.div variants={fadeInUp} className="bg-white rounded-[3rem] p-10 shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-stone-50 relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(252,211,77,0.15)] transition-all duration-500">
-                     {/* Dekoratif Arka Plan İkonu */}
-                     <div className="absolute -right-12 -bottom-12 text-stone-100 opacity-70 group-hover:-rotate-12 transition-transform duration-700">
+                      <div className="absolute -right-12 -bottom-12 text-stone-100 opacity-70 group-hover:-rotate-12 transition-transform duration-700">
                         <Clock size={200} strokeWidth={0.5} />
                     </div>
                     <h3 className={`text-2xl font-bold mb-10 flex items-center gap-3 text-stone-900 ${playfair.className}`}>
@@ -276,7 +273,7 @@ export default function BranchDetailPage() {
                 </motion.div>
             </motion.section>
 
-            {/* --- GALERİ (Şık ve Yuvarlak) --- */}
+            {/* --- GALERİ --- */}
             {galleryItems.length > 0 && (
             <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="space-y-10">
                 <div className="text-center">
@@ -325,7 +322,7 @@ export default function BranchDetailPage() {
             </motion.section>
             )}
 
-            {/* --- MENÜ (Restoran Tarzı Liste) --- */}
+            {/* --- MENÜ --- */}
             {menuItems.length > 0 && (
             <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="space-y-16 pt-12">
                 <div className="text-center">
@@ -379,7 +376,7 @@ export default function BranchDetailPage() {
   )
 }
 
-// --- YARDIMCI BİLEŞENLER (Temiz Kod İçin) ---
+// --- YARDIMCI BİLEŞENLER ---
 
 // Bilgi Satırı
 const InfoItem = ({ icon: Icon, title, content, isLink, href }: { icon: any, title: string, content: string, isLink?: boolean, href?: string }) => {
@@ -413,7 +410,7 @@ const SliderButton = ({ direction, onClick }: { direction: 'left' | 'right', onC
     </button>
 )
 
-// Yükleniyor Ekranı (Premium)
+// Yükleniyor Ekranı
 const LoadingState = () => (
     <main className="min-h-screen bg-[#fffcf8]">
       <Header />
@@ -427,9 +424,9 @@ const LoadingState = () => (
     </main>
 )
 
-// Hata Ekranı (Premium)
+// Hata Ekranı
 const ErrorState = ({ error }: { error: string | null }) => (
-    <main className="min-h-screen bg-[#fffcf8]">
+    <main className="min-h-screen  bg-[#fffcf8]">
       <Header />
       <div className="h-screen flex flex-col items-center justify-center text-center px-4">
         <div className="inline-flex justify-center items-center w-24 h-24 rounded-full bg-red-50 mb-6 shadow-sm ring-4 ring-red-50/50">

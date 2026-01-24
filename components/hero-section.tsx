@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import  Link  from "next/link";
 
 interface Hotspot {
   id: string;
@@ -131,12 +132,15 @@ export function HeroSection() {
               unutulmaz bir kahvaltı deneyimi.
             </p>
             <div className="flex flex-col sm:flex-row gap-5">
+           <Link href="/iletisim">
               <button 
                 className="px-10 py-4 text-white font-bold rounded-full transition-all shadow-lg hover:scale-105 hover:-translate-y-1" 
                 style={{ backgroundColor: accentColor, boxShadow: `0 0 25px ${accentColor}66` }}
               >
                 Rezervasyon Yap
               </button>
+              </Link>
+           <Link href="/menu">
               <button 
                 className="px-10 py-4 bg-transparent text-white font-medium rounded-full border-2 transition-all hover:bg-white/10 backdrop-blur-sm" 
                 style={{ borderColor: accentColor, color: "white" }} 
@@ -145,6 +149,7 @@ export function HeroSection() {
               >
                 Menüyü İncele
               </button>
+              </Link>
             </div>
           </motion.div>
         </div>
@@ -236,7 +241,7 @@ export function HeroSection() {
       </div>
 
       {/* --- HOTSPOTS --- */}
-      {hotspots.map((hotspot, index) => (
+      {/* {hotspots.map((hotspot, index) => (
         <div
           key={hotspot.id}
           className="absolute z-20 hidden lg:block" 
@@ -271,7 +276,7 @@ export function HeroSection() {
             )}
           </AnimatePresence>
         </div>
-      ))}
+      ))} */}
 
       {/* --- SCROLL INDICATOR --- */}
      // HeroSection.tsx veya AboutSection'ın en üstü için güncellenmiş Kaydır kısmı

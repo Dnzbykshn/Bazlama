@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, ChevronRight, ChevronLeft, Star, ChefHat, Coffee, Wheat } from "lucide-react"
+import { ArrowRight, ChevronRight, ChevronLeft, Star, ChefHat, Coffee, Wheat, Utensils, Flame, Sparkles, X } from "lucide-react"
 import Image from "next/image"
-import { Caveat, Inter, Playfair_Display } from "next/font/google"
+import { Caveat, Inter, Playfair_Display, Patrick_Hand } from "next/font/google"
 
 // Fontlar
 const caveat = Caveat({ subsets: ["latin"], weight: ["700"] })
+const patrick = Patrick_Hand({ subsets: ["latin"], weight: ["400"] })
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "800"] })
 const inter = Inter({ subsets: ["latin"] })
 
@@ -17,14 +18,24 @@ const inter = Inter({ subsets: ["latin"] })
 const accentColor = "#8AD7D6";
 const ornekResim = "/DSC04385.jpg";
 
-// MENÜ VERİLERİ
-const menuItems = [
-  { id: 1, title: "Sınırsız Serpme", desc: "Sıcak pişiler, 4 çeşit peynir ve sınırsız çay.", price: "₺₺₺", image: ornekResim },
-  { id: 2, title: "Atom Pişi", desc: "Çikolatalı ve peynir dolgulu lezzet bombası.", price: "₺₺", image: ornekResim },
-  { id: 3, title: "Köy Menemeni", desc: "Bakır sahanda, organik domates ve biberle.", price: "₺₺", image: ornekResim },
-  { id: 4, title: "Sucuklu Yumurta", desc: "Kasap sucuğu ve köy yumurtası.", price: "₺₺", image: ornekResim },
-  { id: 5, title: "Mıhlama", desc: "Trabzon peyniri ve tereyağı ile.", price: "₺₺₺", image: ornekResim },
-  { id: 6, title: "Gözleme Çeşitleri", desc: "El açması, odun ateşinde pişmiş.", price: "₺₺", image: ornekResim }
+// VERİ TİPİ
+interface MenuItem {
+  id: number
+  title: string
+  description: string // 'desc' yerine 'description' kullanıldı (Modal ile uyumlu olsun diye)
+  image_url: string
+  category: string
+  price?: string // Fiyat opsiyonel bırakıldı
+}
+
+// MENÜ VERİLERİ (Yapıyı koruyarak güncelledim)
+const menuItems: MenuItem[] = [
+  { id: 1, title: "Sınırsız Serpme", description: "Sıcak pişiler, 4 çeşit peynir ve sınırsız çay.", price: "₺₺₺", image_url: ornekResim, category: "Kahvaltı" },
+  { id: 2, title: "Atom Pişi", description: "İçi akışkan çikolatalı ve peynir dolgulu lezzet bombası.", price: "₺₺", image_url: ornekResim, category: "Tatlı" },
+  { id: 3, title: "Köy Menemeni", description: "Bakır sahanda, organik domates ve biberle.", price: "₺₺", image_url: ornekResim, category: "Sıcaklar" },
+  { id: 4, title: "Sucuklu Yumurta", description: "Kasap sucuğu ve köy yumurtası.", price: "₺₺", image_url: ornekResim, category: "Sıcaklar" },
+  { id: 5, title: "Mıhlama", description: "Trabzon peyniri ve tereyağı ile.", price: "₺₺₺", image_url: ornekResim, category: "Yöresel" },
+  { id: 6, title: "Gözleme Çeşitleri", description: "El açması, odun ateşinde pişmiş.", price: "₺₺", image_url: ornekResim, category: "Hamur İşi" }
 ];
 
 // Animasyonlar
@@ -45,9 +56,106 @@ const cardVariants = {
   }
 };
 
+// --- DETAY MODALI ---
+const MenuDetailModal = ({ item, isOpen, onClose }: { item: MenuItem | null, isOpen: boolean, onClose: () => void }) => {
+    if (!item) return null;
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="fixed inset-0 bg-stone-950/60 backdrop-blur-md z-[60] flex items-center justify-center p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="bg-[#fffcf8] rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden relative border border-white"
+                        >
+                            <button 
+                                onClick={onClose}
+                                className="absolute top-4 right-4 z-30 bg-white/90 backdrop-blur p-2 rounded-full hover:bg-red-50 hover:text-red-500 transition-all border border-stone-100 shadow-sm"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+
+                            <div className="flex flex-col">
+                                <div className="relative h-72 w-full bg-stone-100 group">
+                                    {item.image_url ? (
+                                        <Image src={item.image_url} alt={item.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-6xl text-stone-300">🍽️</div>
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80"></div>
+                                    
+                                    <div className="absolute bottom-6 left-6">
+                                        <span className="px-4 py-1.5 bg-[#8AD7D6] text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg border border-white/20 backdrop-blur-sm flex items-center gap-2">
+                                            <Sparkles size={12} />
+                                            {item.category}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="p-8 pt-10 relative">
+                                    <h3 className={`text-4xl font-bold text-slate-800 mb-3 leading-tight ${playfair.className}`}>
+                                        {item.title}
+                                    </h3>
+                                    
+                                    <div className="w-20 h-1.5 bg-[#8AD7D6]/20 rounded-full mb-6">
+                                        <div className="w-1/2 h-full bg-[#8AD7D6] rounded-full"></div>
+                                    </div>
+
+                                    <p className={`text-slate-600 text-xl leading-relaxed ${patrick.className}`}>
+                                        {item.description}
+                                    </p>
+
+                                    <div className="mt-8 pt-6 border-t border-stone-100 flex justify-between items-center">
+                                        <span className="text-sm text-stone-400 font-medium uppercase tracking-wider">Afiyet Olsun</span>
+                                        <button 
+                                            onClick={onClose}
+                                            className="px-8 py-3 bg-[#8AD7D6] text-white rounded-full font-bold shadow-lg hover:bg-[#7acaca] hover:shadow-[#8AD7D6]/30 hover:scale-105 transition-all flex items-center gap-2"
+                                        >
+                                            Kapat
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    )
+}
+
+// --- ANA BİLEŞEN ---
 export function MenuPageCTASection() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  
+  // Modal State'leri
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Modal Açma
+  const openModal = (item: MenuItem) => {
+      setSelectedItem(item);
+      setIsModalOpen(true);
+      setIsPaused(true);
+  };
+
+  // Modal Kapatma
+  const closeModal = () => {
+      setIsModalOpen(false);
+      setIsPaused(false);
+      setTimeout(() => setSelectedItem(null), 300);
+  };
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -67,60 +175,47 @@ export function MenuPageCTASection() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isPaused) scroll('right');
+      if (!isPaused && !isModalOpen) scroll('right');
     }, 4500); 
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, isModalOpen]);
 
   return (
-    // DÜZELTME: Rengi garantiye almak için 'style' prop'u ile standart CSS Gradient verdik.
-    // Bu yöntem Tailwind config hatası olsa bile çalışır.
     <section 
         className="relative pt-40 pb-32 md:pt-52 md:pb-40 px-4 overflow-hidden" 
         style={{ background: 'linear-gradient(180deg, #AEEEEE 0%, #8AD7D6 100%)' }}
     >
       
-      {/* --- ARKA PLAN DEKORASYONU (BOŞLUK DOLDURUCULAR) --- */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-         
-         {/* 1. Nokta Dokusu (Texture) */}
-         <div className="absolute inset-0 opacity-[0.07]" 
-              style={{ backgroundImage: 'radial-gradient(#fff 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}>
-         </div>
+      {/* MODAL BİLEŞENİ */}
+      <MenuDetailModal item={selectedItem} isOpen={isModalOpen} onClose={closeModal} />
 
-         {/* 2. SOL TARAFTAKİ ELEMENTLER */}
-         {/* Dönen Buğday İkonu */}
-         <motion.div 
+      {/* --- ARKA PLAN DEKORASYONU --- */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 opacity-[0.07]" 
+              style={{ backgroundImage: 'radial-gradient(#fff 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}>
+          </div>
+          <motion.div 
             animate={{ rotate: [0, 10, 0] }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
             className="absolute top-1/3 -left-10 md:left-10 text-white/10"
-         >
+          >
             <Wheat size={300} strokeWidth={1} />
-         </motion.div>
-         
-         {/* Sol Işık Efekti */}
-         <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-white/20 rounded-full blur-[80px] mix-blend-overlay" />
-
-
-         {/* 3. SAĞ TARAFTAKİ ELEMENTLER */}
-         {/* Kahve/Çay Fincanı İkonu */}
-         <motion.div 
+          </motion.div>
+          <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-white/20 rounded-full blur-[80px] mix-blend-overlay" />
+          <motion.div 
             animate={{ y: [0, -20, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             className="absolute top-1/4 -right-12 md:right-10 text-white/10"
-         >
+          >
             <Coffee size={250} strokeWidth={1.5} />
-         </motion.div>
-         
-         {/* Aşçı Şapkası (Alt Sağ) */}
-         <motion.div 
+          </motion.div>
+          <motion.div 
             animate={{ rotate: [-10, 0, -10] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="absolute bottom-1/3 right-1/4 text-white/5 hidden md:block"
-         >
+          >
             <ChefHat size={150} strokeWidth={1} />
-         </motion.div>
-
+          </motion.div>
       </div>
 
       {/* --- ÜST DALGA (BEYAZ) --- */}
@@ -193,37 +288,38 @@ export function MenuPageCTASection() {
                     <motion.div 
                         key={item.id}
                         variants={cardVariants}
-                        className="min-w-[280px] md:min-w-[360px] bg-white rounded-[2.5rem] p-4 shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(255,255,255,0.5)] transition-all duration-500 flex flex-col group relative snap-center h-full hover:-translate-y-3 border border-white/50"
+                        onClick={() => openModal(item)} // Tıklanınca Modal Aç
+                        className="min-w-[300px] md:min-w-[360px] snap-center h-full group cursor-pointer"
                     >
-                        {/* Resim Alanı */}
-                        <div className="w-full h-56 md:h-72 rounded-[2rem] mb-6 overflow-hidden relative shadow-md">
-                             <Image 
-                                src={item.image} 
-                                alt={item.title} 
-                                fill 
-                                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-                             /> 
-                             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
-                             
-                             <div className="absolute bottom-4 left-4 text-white font-bold text-lg drop-shadow-md">
-                                {item.title}
-                             </div>
-
-                             {/* <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-bold text-stone-800 shadow-lg z-10 flex items-center gap-1">
-                                {item.price}
-                             </div>  commit*/}
-                        </div>
-
-                        {/* İçerik */}
-                        <div className="px-3 pb-2 flex-grow flex flex-col">
-                            <p className="text-stone-500 text-sm md:text-base leading-relaxed font-medium mb-4 line-clamp-2">
-                                {item.desc}
-                            </p>
+                         {/* --- YENİ KART TASARIMI (1. KODDAN ALINDI) --- */}
+                         <div className="bg-white rounded-[2.5rem] p-4 shadow-lg group-hover:shadow-[0_20px_40px_-15px_rgba(255,255,255,0.5)] transition-all duration-300 group-hover:-translate-y-2 relative flex flex-col h-full overflow-hidden border border-white/50">
                             
-                            <div className="mt-auto flex justify-between items-center border-t border-stone-100 pt-4">
-                                <span className="text-xs font-bold text-stone-400 uppercase tracking-widest group-hover:text-[#8AD7D6] transition-colors">İncele</span>
-                                <div className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center text-stone-400 group-hover:bg-[#8AD7D6] group-hover:text-white transition-all duration-300">
-                                    <ArrowRight className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" />
+                            {/* Resim Alanı */}
+                            <div className="w-full h-64 rounded-[2rem] overflow-hidden relative bg-stone-100 shadow-inner">
+                                 <Image 
+                                    src={item.image_url} 
+                                    alt={item.title} 
+                                    fill 
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110" 
+                                 /> 
+                            </div>
+
+                            {/* İçerik */}
+                            <div className="px-2 pt-6 pb-2 flex-grow flex flex-col">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Utensils className="w-4 h-4 text-[#8AD7D6]" />
+                                    <h3 className={`text-3xl font-bold text-stone-900 ${playfair.className}`}>{item.title}</h3>
+                                </div>
+                                
+                                <p className={`text-stone-500 text-lg leading-6 mb-6 line-clamp-2 ${patrick.className}`}>
+                                    {item.description}
+                                </p>
+
+                                <div className="mt-auto pt-4 border-t-2 border-dashed border-stone-100 flex justify-between items-center">
+                                    <span className={`text-sm font-bold text-stone-400 uppercase tracking-widest group-hover:text-[#8AD7D6] transition-colors ${inter.className}`}>Detaylı Bak</span>
+                                    <div className="w-10 h-10 rounded-full bg-[#f0fdfd] border border-[#8AD7D6]/20 flex items-center justify-center text-[#8AD7D6] group-hover:bg-[#8AD7D6] group-hover:text-white transition-all duration-300">
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -261,7 +357,7 @@ export function MenuPageCTASection() {
         </div>
 
         {/* --- ANA BUTON --- */}
-        <div className="text-center mt-16 relative z-30">
+        {/* <div className="text-center mt-16 relative z-30">
             <Link href="/menu">
                 <Button 
                     variant="secondary"
@@ -274,7 +370,7 @@ export function MenuPageCTASection() {
                     <div className="absolute inset-0 bg-stone-50 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500 ease-out -z-0" />
                 </Button>
             </Link>
-        </div>
+        </div> */}
 
       </div>
 

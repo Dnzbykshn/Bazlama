@@ -245,7 +245,7 @@ export default function IletisimPage() {
 
                 <Button
                   type="submit"
-                  className="w-full h-14 rounded-xl text-lg font-bold shadow-lg transition-all mt-2 hover:scale-[1.02] hover:-translate-y-1 active:scale-95"
+                  className="w-full  h-14 rounded-xl text-lg font-bold shadow-lg transition-all mt-2 hover:scale-[1.02] hover:-translate-y-1 active:scale-95"
                   style={{ backgroundColor: accentColor, color: '#022c22', boxShadow: `0 0 20px ${accentColor}40` }}
                   disabled={loading}
                 >
@@ -344,7 +344,7 @@ export default function IletisimPage() {
         </div>
       </section>
 {/* --- YENİ BÖLÜM: MERAK ETTİKLERİNİZ & SOSYAL (BEYAZ ARKAPLAN) --- */}
-      <section className="relative py-24 px-6 bg-[#fffcf8] text-[#022c22] overflow-hidden">
+      <section className="relative py-24 px-6 bg-[#ffffff] text-[#022c22] overflow-hidden">
         
         {/* Dekoratif Arka Plan (Silik Desenler) */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/cream-paper.png")` }}></div>

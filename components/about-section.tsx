@@ -47,9 +47,9 @@ export function AboutSection() {
                 />
             </motion.div>
 
-            <h2 className="text-4xl md:text-6xl font-serif font-bold text-[#022c22] leading-[1.1]">
-              Geleneksel Lezzet, <br />
-              <span className="italic font-light" style={{ color: accentColor }}>Modern Dokunuş</span>
+            <h2 className="text-4xl md:text-4xl font-serif font-bold text-[#022c22] leading-[1.1]">
+              Siz Tamam Diyene Kadar, <br />
+              <span className="italic font-light" style={{ color: accentColor }}>Biz Servise Devam Ediyoruz </span>
             </h2>
 
             <div className="space-y-6 text-lg text-stone-600 font-serif italic leading-relaxed max-w-lg mx-auto lg:mx-0">
@@ -78,7 +78,7 @@ export function AboutSection() {
                     />
                 </svg>
                 <p className="font-serif text-xl font-bold italic" style={{ color: "#022c22" }}>
-                    &quot;Siz tamam diyene kadar, biz servise devam ediyoruz ;)&quot;
+                    &quot;Geleneksel Lezzet Modern Dokunuş ;)&quot;
                 </p>
             </motion.div>
           </div>
