@@ -226,21 +226,21 @@ export default function GaleriPage() {
             </motion.div>
           ) : (
             <motion.div 
-              layout
+              key={activeCategory}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
             >
-              <AnimatePresence>
-                {filteredImages.map((item, index) => (
-                  <motion.div
-                    layout
-                    key={item.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.4, type: "spring", stiffness: 100 }}
-                    className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-white shadow-lg shadow-stone-200/40 hover:shadow-2xl hover:shadow-[#8AD7D6]/20 transition-all duration-500 aspect-[4/5] hover:-translate-y-2"
-                    onClick={() => setSelectedImageIndex(index)}
-                  >
+              {filteredImages.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-white shadow-lg shadow-stone-200/40 hover:shadow-2xl hover:shadow-[#8AD7D6]/20 transition-all duration-500 aspect-[4/5] hover:-translate-y-2"
+                  onClick={() => setSelectedImageIndex(index)}
+                >
                     <Image
                       src={item.image_url}
                       alt={item.title || "Galeri"}
@@ -257,7 +257,6 @@ export default function GaleriPage() {
                             {item.category}
                           </span>
                         )}
-                        <h3 className={`text-white text-2xl mb-1 ${playfair.className}`}>{item.title}</h3>
                         {item.description && (
                           <p className="text-stone-200 text-sm font-light line-clamp-2 leading-relaxed opacity-90">
                             {item.description}
@@ -272,7 +271,6 @@ export default function GaleriPage() {
                     </div>
                   </motion.div>
                 ))}
-              </AnimatePresence>
             </motion.div>
           )}
         </div>
@@ -353,9 +351,6 @@ export default function GaleriPage() {
                                 {filteredImages[selectedImageIndex].category}
                             </span>
                         )}
-                        <h2 className={`text-3xl md:text-4xl text-white mb-2 ${playfair.className}`}>
-                            {filteredImages[selectedImageIndex].title}
-                        </h2>
                         {filteredImages[selectedImageIndex].description && (
                             <p className="text-stone-300 text-sm md:text-base font-light leading-relaxed">
                                 {filteredImages[selectedImageIndex].description}

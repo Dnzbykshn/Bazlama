@@ -1,12 +1,71 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 // Logonun tam rengi
 const accentColor = "#8AD7D6";
 
+interface HeroImage {
+  id: string;
+  image_url: string;
+  hero_main: boolean;
+}
+
 export function AboutSection() {
+  const [mainImage, setMainImage] = useState<string | null>(null);
+  const [smallImages, setSmallImages] = useState<(string | null)[]>([null, null, null, null]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchHeroImages() {
+      try {
+        if (!isSupabaseConfigured) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Fetch main hero image
+        const { data: mainData } = await supabase
+          .from("gallery")
+          .select("id, image_url")
+          .eq("hero_main", true)
+          .limit(1)
+          .single();
+
+        if (mainData) {
+          setMainImage(mainData.image_url);
+        }
+
+        // Fetch small hero images (hero_section but not hero_main)
+        const { data: smallData } = await supabase
+          .from("gallery")
+          .select("id, image_url")
+          .eq("hero_section", true)
+          .eq("hero_main", false)
+          .order("position", { ascending: true })
+          .limit(4);
+
+        if (smallData && smallData.length > 0) {
+          const images: (string | null)[] = smallData.map((item: HeroImage) => item.image_url);
+          // Fill remaining slots with null
+          while (images.length < 4) {
+            images.push(null);
+          }
+          setSmallImages(images);
+        }
+      } catch (error) {
+        console.error("Error fetching hero images:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchHeroImages();
+  }, []);
+
   return (
     // mt-[-1px] Hero ile aradaki olası beyaz boşluğu kapatır
     <section className="relative bg-[#FDFBF7] pt-24 pb-24 lg:pb-32 mt-[-5px] overflow-visible">
@@ -95,22 +154,38 @@ export function AboutSection() {
                 className="col-span-7 relative aspect-square rotate-[-2deg] p-2 bg-white shadow-2xl border-[3px] border-stone-800"
                 style={{ borderRadius: '4px 15px 5px 20px' }}
               >
-                <div className="relative w-full h-full overflow-hidden rounded-sm">
-                    <Image src="/DSC04385.jpg" alt="Pişi Kahvaltı Mekan" fill className="object-cover" />
+                <div className="relative w-full h-full overflow-hidden rounded-sm bg-stone-100">
+                    {mainImage ? (
+                      <Image src={mainImage} alt="Pişi Kahvaltı Mekan" fill className="object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-stone-300">
+                        <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
                 </div>
               </motion.div>
 
               {/* KÜÇÜK POLAROIDLER: Dağınık ve Siyah Çerçeveli */}
               <div className="col-span-5 grid grid-cols-2 gap-3">
-                 {[1, 2, 3, 4].map((i) => (
+                 {[0, 1, 2, 3].map((i) => (
                     <motion.div
                         key={i}
                         whileHover={{ scale: 1.1, zIndex: 30, rotate: 0 }}
                         className="relative aspect-square bg-white p-1 shadow-lg border border-stone-800 rotate-[4deg] even:-rotate-[4deg]"
                         style={{ borderRadius: '2px 8px 3px 10px' }}
                     >
-                        <div className="relative w-full h-full overflow-hidden">
-                            <Image src="/DSC04385.jpg" alt="Kahvaltı Detay" fill className="object-cover" />
+                        <div className="relative w-full h-full overflow-hidden bg-stone-100">
+                            {smallImages[i] ? (
+                              <Image src={smallImages[i]!} alt="Kahvaltı Detay" fill className="object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-stone-300">
+                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                              </div>
+                            )}
                         </div>
                     </motion.div>
                  ))}

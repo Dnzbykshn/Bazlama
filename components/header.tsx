@@ -144,6 +144,20 @@ export function Header() {
                
                 
                   <Link
+                    href="/bizi-taniyin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all"
+                  >
+                    Bizi Tanıyın
+                  </Link>
+                  <Link
+                    href="/bizi-taniyin/franchise"
+                    onClick={() => setMobileMenuOpen(false)} 
+                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all pl-8"
+                  >
+                    Franchise Başvuru
+                  </Link>
+                  <Link
                     href="https://wa.me/905402714040"
                     target="_blank"
                     rel="noopener noreferrer"

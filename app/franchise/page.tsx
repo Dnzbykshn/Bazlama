@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { motion } from "framer-motion"
 import { TrendingUp, Users, Store, ArrowRight, ClipboardCheck, PenTool, GraduationCap, PartyPopper, Wallet, ChefHat, Coffee, Utensils, Sun, Wheat, Egg, Milk, Croissant, Sandwich } from "lucide-react"
+import { supabase, isSupabaseConfigured } from "@/lib/supabase"
+import { useToast } from "@/hooks/use-toast"
 
 const accentColor = "#8AD7D6";
 
@@ -42,6 +44,170 @@ export default function FranchisePage() {
     ekNotlar: "",
     kvkkOnay: false
   })
+
+  const [loading, setLoading] = useState(false)
+  const [franchiseStats, setFranchiseStats] = useState({
+    activeBranches: "12+",
+    yearlyGuests: "500K+",
+    investmentReturn: "%100"
+  })
+  const { toast } = useToast()
+
+  // Franchise istatistiklerini veritabanından çek
+  useEffect(() => {
+    async function fetchFranchiseStats() {
+      try {
+        if (!isSupabaseConfigured) return;
+
+        const { data: branchesData } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "franchise_active_branches")
+          .single();
+
+        const { data: guestsData } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "franchise_yearly_guests")
+          .single();
+
+        const { data: returnData } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "franchise_investment_return")
+          .single();
+
+        setFranchiseStats({
+          activeBranches: branchesData?.value || "12+",
+          yearlyGuests: guestsData?.value || "500K+",
+          investmentReturn: returnData?.value || "%100"
+        });
+      } catch (error) {
+        console.error("Error fetching franchise stats:", error);
+      }
+    }
+    fetchFranchiseStats();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    // Zorunlu alan kontrolleri
+    if (!formData.adSoyad || !formData.telefon || !formData.email) {
+      toast({
+        title: "Eksik bilgi",
+        description: "Ad Soyad, Telefon ve E-posta alanları zorunludur.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!formData.tecrube) {
+      toast({
+        title: "Eksik bilgi",
+        description: "Gıda sektöründe tecrübe sorusunu cevaplamalısınız.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!formData.yerDurumu) {
+      toast({
+        title: "Eksik bilgi",
+        description: "Uygun bir yeriniz var mı sorusunu cevaplamalısınız.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!formData.kvkkOnay) {
+      toast({
+        title: "KVKK Onayı",
+        description: "Devam etmek için KVKK onayını kabul etmelisiniz.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      if (!isSupabaseConfigured) {
+        toast({
+          title: "Başvuru alındı!",
+          description: "Başvurunuz başarıyla gönderildi. (Demo modu)",
+        })
+        setLoading(false)
+        return
+      }
+
+      const { error } = await supabase.from("franchise_applications").insert([
+        {
+          name: formData.adSoyad,
+          phone: formData.telefon,
+          email: formData.email,
+          city: formData.ikametIlIlce,
+          birth_year: formData.dogumYili || null,
+          job_status: formData.meslek || null,
+          target_city: formData.hedefSehir || null,
+          location_type: formData.lokasyonTipi || null,
+          has_food_beverage_experience: formData.tecrube === 'evet',
+          experience_description: formData.tecrubeAciklama || null,
+          has_location: formData.yerDurumu === 'evet',
+          location_area: formData.alanM2 || null,
+          seating_capacity: formData.kapasite || null,
+          has_outdoor_area: formData.terasVarMi === 'evet',
+          investment_budget: formData.butce || null,
+          opening_timeline: formData.acilisSuresi || null,
+          operator_type: formData.isletmeci || null,
+          motivation: formData.motivasyon || null,
+          additional_notes: formData.ekNotlar || null,
+          kvkk_consent: formData.kvkkOnay,
+        },
+      ])
+
+      if (error) throw error
+
+      toast({
+        title: "Başvuru alındı!",
+        description: "Başvurunuz başarıyla gönderildi. En kısa sürede sizinle iletişime geçeceğiz.",
+      })
+
+      // Formu sıfırla
+      setFormData({
+        adSoyad: "",
+        telefon: "",
+        email: "",
+        ikametIlIlce: "",
+        dogumYili: "",
+        meslek: "",
+        hedefSehir: "",
+        lokasyonTipi: "",
+        tecrube: "",
+        tecrubeAciklama: "",
+        yerDurumu: "",
+        alanM2: "",
+        kapasite: "",
+        terasVarMi: "",
+        butce: "",
+        acilisSuresi: "",
+        isletmeci: "",
+        motivasyon: "",
+        ekNotlar: "",
+        kvkkOnay: false
+      })
+
+    } catch (error: any) {
+      console.error("Error submitting franchise application:", error)
+      toast({
+        title: "Hata oluştu",
+        description: error.message || "Başvuru gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Timeline Steps
   const steps = [
@@ -147,9 +313,9 @@ export default function FranchisePage() {
         <div className="container mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 md:gap-12 text-center divide-y divide-white/10 md:divide-y-0 md:divide-x">
             {[
-              { icon: Store, value: "12+", label: "Aktif Şube" },
-              { icon: Users, value: "500K+", label: "Yıllık Misafir" },
-              { icon: TrendingUp, value: "%100", label: "Yatırım Geri Dönüşü" }
+              { icon: Store, value: franchiseStats.activeBranches, label: "Aktif Şube" },
+              { icon: Users, value: franchiseStats.yearlyGuests, label: "Yıllık Misafir" },
+              { icon: TrendingUp, value: franchiseStats.investmentReturn, label: "Yatırım Geri Dönüşü" }
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -258,14 +424,14 @@ export default function FranchisePage() {
               </h3>
               <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Ad Soyad</Label>
+                  <Label className="text-stone-700 font-semibold">Ad Soyad <span className="text-red-500">*</span></Label>
                   <Input
                     value={formData.adSoyad} onChange={(e) => setFormData({ ...formData, adSoyad: e.target.value })}
                     className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl transition-all"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Telefon</Label>
+                  <Label className="text-stone-700 font-semibold">Telefon <span className="text-red-500">*</span></Label>
                   <Input
                     type="tel"
                     value={formData.telefon} onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
@@ -273,7 +439,7 @@ export default function FranchisePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">E-Posta</Label>
+                  <Label className="text-stone-700 font-semibold">E-Posta <span className="text-red-500">*</span></Label>
                   <Input
                     type="email"
                     value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -281,21 +447,21 @@ export default function FranchisePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">İl / İlçe (İkamet)</Label>
+                  <Label className="text-stone-700 font-semibold">İl / İlçe (İkamet) <span className="text-red-500">*</span></Label>
                   <Input
                     value={formData.ikametIlIlce} onChange={(e) => setFormData({ ...formData, ikametIlIlce: e.target.value })}
                     className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl transition-all"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Doğum Yılı (Opsiyonel)</Label>
+                  <Label className="text-stone-700 font-semibold">Doğum Yılı</Label>
                   <Input
                     value={formData.dogumYili} onChange={(e) => setFormData({ ...formData, dogumYili: e.target.value })}
                     className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl transition-all"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Meslek / Mevcut İş Durumu</Label>
+                  <Label className="text-stone-700 font-semibold">Meslek / Mevcut İş Durumu <span className="text-red-500">*</span></Label>
                   <Select onValueChange={(val) => setFormData({ ...formData, meslek: val })}>
                     <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
                       <SelectValue placeholder="Seçiniz" />
@@ -320,7 +486,7 @@ export default function FranchisePage() {
               </h3>
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Bayilik açmayı düşündüğünüz şehir / ilçe</Label>
+                  <Label className="text-stone-700 font-semibold">Bayilik açmayı düşündüğünüz şehir / ilçe <span className="text-red-500">*</span></Label>
                   <Input
                     value={formData.hedefSehir} onChange={(e) => setFormData({ ...formData, hedefSehir: e.target.value })}
                     className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl"
@@ -328,7 +494,7 @@ export default function FranchisePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Hedef Lokasyon Tipi</Label>
+                  <Label className="text-stone-700 font-semibold">Hedef Lokasyon Tipi <span className="text-red-500">*</span></Label>
                   <Select onValueChange={(val) => setFormData({ ...formData, lokasyonTipi: val })}>
                     <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
                       <SelectValue placeholder="Seçiniz" />
@@ -343,9 +509,11 @@ export default function FranchisePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Daha önce gıda & içecek sektöründe işletmecilik yaptınız mı?</Label>
-                  <Select onValueChange={(val) => setFormData({ ...formData, tecrube: val })}>
-                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                  <Label className="text-stone-700 font-semibold">
+                    Daha önce gıda & içecek sektöründe işletmecilik yaptınız mı? <span className="text-red-500">*</span>
+                  </Label>
+                  <Select value={formData.tecrube} onValueChange={(val) => setFormData({ ...formData, tecrube: val })}>
+                    <SelectTrigger className={`bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl ${!formData.tecrube ? 'border-red-200' : ''}`}>
                       <SelectValue placeholder="Seçiniz" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-stone-200">
@@ -375,9 +543,11 @@ export default function FranchisePage() {
               </h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2 md:col-span-2">
-                  <Label className="text-stone-700 font-semibold">Uygun bir yeriniz var mı?</Label>
-                  <Select onValueChange={(val) => setFormData({ ...formData, yerDurumu: val })}>
-                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                  <Label className="text-stone-700 font-semibold">
+                    Uygun bir yeriniz var mı? <span className="text-red-500">*</span>
+                  </Label>
+                  <Select value={formData.yerDurumu} onValueChange={(val) => setFormData({ ...formData, yerDurumu: val })}>
+                    <SelectTrigger className={`bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl ${!formData.yerDurumu ? 'border-red-200' : ''}`}>
                       <SelectValue placeholder="Durum Seçiniz" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-stone-200">
@@ -387,26 +557,36 @@ export default function FranchisePage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
+                
+                {/* Yer bilgileri - sadece "evet" seçildiğinde aktif */}
+                <div className={`space-y-2 ${formData.yerDurumu !== 'evet' ? 'opacity-50 pointer-events-none' : ''}`}>
                   <Label className="text-stone-700 font-semibold">Yaklaşık Alan (m²)</Label>
                   <Input
-                    value={formData.alanM2} onChange={(e) => setFormData({ ...formData, alanM2: e.target.value })}
+                    value={formData.alanM2} 
+                    onChange={(e) => setFormData({ ...formData, alanM2: e.target.value })}
                     type="number"
-                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl"
+                    disabled={formData.yerDurumu !== 'evet'}
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl disabled:bg-stone-100 disabled:cursor-not-allowed"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className={`space-y-2 ${formData.yerDurumu !== 'evet' ? 'opacity-50 pointer-events-none' : ''}`}>
                   <Label className="text-stone-700 font-semibold">Tahmini Oturma Kapasitesi</Label>
                   <Input
-                    value={formData.kapasite} onChange={(e) => setFormData({ ...formData, kapasite: e.target.value })}
+                    value={formData.kapasite} 
+                    onChange={(e) => setFormData({ ...formData, kapasite: e.target.value })}
                     type="number"
-                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl"
+                    disabled={formData.yerDurumu !== 'evet'}
+                    className="bg-stone-50 border-stone-200 text-stone-900 h-14 focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl disabled:bg-stone-100 disabled:cursor-not-allowed"
                   />
                 </div>
-                <div className="space-y-2 md:col-span-2">
+                <div className={`space-y-2 md:col-span-2 ${formData.yerDurumu !== 'evet' ? 'opacity-50 pointer-events-none' : ''}`}>
                   <Label className="text-stone-700 font-semibold">Açık Alan / Teras var mı?</Label>
-                  <Select onValueChange={(val) => setFormData({ ...formData, terasVarMi: val })}>
-                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
+                  <Select 
+                    value={formData.terasVarMi} 
+                    onValueChange={(val) => setFormData({ ...formData, terasVarMi: val })}
+                    disabled={formData.yerDurumu !== 'evet'}
+                  >
+                    <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl disabled:bg-stone-100 disabled:cursor-not-allowed">
                       <SelectValue placeholder="Seçiniz" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-stone-200">
@@ -427,7 +607,7 @@ export default function FranchisePage() {
               </h3>
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Tahmini Yatırım Bütçesi</Label>
+                  <Label className="text-stone-700 font-semibold">Tahmini Yatırım Bütçesi <span className="text-red-500">*</span></Label>
                   <Select onValueChange={(val) => setFormData({ ...formData, butce: val })}>
                     <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
                       <SelectValue placeholder="Bütçe Aralığı" />
@@ -441,7 +621,7 @@ export default function FranchisePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Açılış Hedef Süresi</Label>
+                  <Label className="text-stone-700 font-semibold">Açılış Hedef Süresi <span className="text-red-500">*</span></Label>
                   <Select onValueChange={(val) => setFormData({ ...formData, acilisSuresi: val })}>
                     <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
                       <SelectValue placeholder="Süre Seçiniz" />
@@ -456,7 +636,7 @@ export default function FranchisePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Bayiliği kim işletecek?</Label>
+                  <Label className="text-stone-700 font-semibold">Bayiliği kim işletecek? <span className="text-red-500">*</span></Label>
                   <Select onValueChange={(val) => setFormData({ ...formData, isletmeci: val })}>
                     <SelectTrigger className="bg-stone-50 border-stone-200 text-stone-900 h-14 hover:bg-stone-100 rounded-xl">
                       <SelectValue placeholder="Seçiniz" />
@@ -480,7 +660,7 @@ export default function FranchisePage() {
               </h3>
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="text-stone-700 font-semibold">Neden bu bayiliği almak istiyorsunuz?</Label>
+                  <Label className="text-stone-700 font-semibold">Neden bu bayiliği almak istiyorsunuz? <span className="text-red-500">*</span></Label>
                   <Textarea
                     value={formData.motivasyon} onChange={(e) => setFormData({ ...formData, motivasyon: e.target.value })}
                     className="bg-stone-50 border-stone-200 text-stone-900 min-h-[120px] focus:border-[#8AD7D6] focus:ring-[#8AD7D6]/20 rounded-xl p-4"
@@ -517,8 +697,20 @@ export default function FranchisePage() {
                 <div className="text-stone-500 font-serif text-sm opacity-60">
                   {new Date().toLocaleDateString('tr-TR')} tarihinde elektronik olarak imzalanmıştır.
                 </div>
-                <Button className="w-full md:w-auto h-16 px-12 bg-[#022c22] text-white hover:bg-[#034435] font-bold text-lg rounded-2xl shadow-xl transition-all hover:scale-[1.02]">
-                  Başvuruyu Tamamla
+                <Button 
+                  type="submit"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="w-full md:w-auto h-16 px-12 bg-[#022c22] text-white hover:bg-[#034435] font-bold text-lg rounded-2xl shadow-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                      Gönderiliyor...
+                    </>
+                  ) : (
+                    "Başvuruyu Tamamla"
+                  )}
                 </Button>
               </div>
             </div>

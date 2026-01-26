@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronRight, ChevronLeft } from "lucide-react"
 import Image from "next/image"
+import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 
 // Marka Rengi
 const accentColor = "#8AD7D6";
@@ -13,49 +14,72 @@ const accentColor = "#8AD7D6";
 // Resim dosyan "public" klasörünün içinde olmalı!
 const ornekResim = "/DSC04385.jpg";
 
-// MENÜ VERİLERİ
-const menuItems = [
-  {
-    id: 1,
-    title: "Sınırsız Serpme",
-    desc: "Sıcak pişiler, 4 çeşit peynir ve sınırsız çay.",
-    image: ornekResim, 
-  },
-  {
-    id: 2,
-    title: "Atom Pişi",
-    desc: "Çikolatalı ve peynir dolgulu lezzet bombası.",
-    image: ornekResim, // Test için hepsine aynı resmi verdim
-  },
-  {
-    id: 3,
-    title: "Köy Menemeni",
-    desc: "Bakır sahanda, organik domates ve biberle.",
-    image: ornekResim,
-  },
-  {
-    id: 4,
-    title: "Sucuklu Yumurta",
-    desc: "Kasap sucuğu ve köy yumurtası.",
-    image: ornekResim,
-  },
-   {
-    id: 5,
-    title: "Mıhlama",
-    desc: "Trabzon peyniri ve tereyağı ile.",
-    image: ornekResim,
-  },
-  {
-    id: 6,
-    title: "Gözleme Çeşitleri",
-    desc: "El açması, odun ateşinde pişmiş.",
-    image: ornekResim,
-  }
+interface MenuItem {
+  id: string
+  title: string
+  description: string | null
+  image_url: string | null
+}
+
+// Fallback menü verileri (Supabase bağlantısı yoksa)
+const fallbackMenuItems: MenuItem[] = [
+  { id: "1", title: "Sınırsız Serpme", description: "Sıcak pişiler, 4 çeşit peynir ve sınırsız çay.", image_url: ornekResim },
+  { id: "2", title: "Atom Pişi", description: "Çikolatalı ve peynir dolgulu lezzet bombası.", image_url: ornekResim },
+  { id: "3", title: "Köy Menemeni", description: "Bakır sahanda, organik domates ve biberle.", image_url: ornekResim },
+  { id: "4", title: "Sucuklu Yumurta", description: "Kasap sucuğu ve köy yumurtası.", image_url: ornekResim },
+  { id: "5", title: "Mıhlama", description: "Trabzon peyniri ve tereyağı ile.", image_url: ornekResim },
+  { id: "6", title: "Gözleme Çeşitleri", description: "El açması, odun ateşinde pişmiş.", image_url: ornekResim }
 ];
 
 export function MenuCTASection() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Veritabanından menü öğelerini çek
+  useEffect(() => {
+    async function fetchMenuItems() {
+      try {
+        if (!isSupabaseConfigured) {
+          setMenuItems(fallbackMenuItems)
+          setIsLoading(false)
+          return
+        }
+        
+        const { data: menuData } = await supabase
+          .from("unlimited_menu")
+          .select("*")
+          .eq("active", true)
+          .limit(1)
+          .single()
+        
+        if (menuData) {
+          const { data: itemsData } = await supabase
+            .from("unlimited_menu_items")
+            .select("*")
+            .eq("menu_id", menuData.id)
+            .eq("featured", true)
+            .order("position", { ascending: true })
+            .limit(6)
+          
+          if (itemsData && itemsData.length > 0) {
+            setMenuItems(itemsData)
+          } else {
+            setMenuItems(fallbackMenuItems)
+          }
+        } else {
+          setMenuItems(fallbackMenuItems)
+        }
+      } catch (error) {
+        console.error("Error fetching menu items:", error)
+        setMenuItems(fallbackMenuItems)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchMenuItems()
+  }, [])
 
   // --- KAYDIRMA FONKSİYONLARI ---
   const scroll = (direction: 'left' | 'right') => {
@@ -78,13 +102,18 @@ export function MenuCTASection() {
   // --- OTOMATİK KAYDIRMA ---
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isPaused) {
+      if (!isPaused && !isLoading) {
         scroll('right');
       }
     }, 3000); 
 
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, isLoading]);
+
+  // Yükleme sırasında section'ı gizle veya loading göster
+  if (isLoading || menuItems.length === 0) {
+    return null;
+  }
 
   return (
     <section className="relative py-16 pb-24 px-4 overflow-hidden" style={{ backgroundColor: accentColor }}>
@@ -151,12 +180,10 @@ export function MenuCTASection() {
                         transition={{ delay: index * 0.1 }}
                         className="min-w-[260px] md:min-w-[300px] bg-white rounded-[2rem] p-3 shadow-lg flex flex-col group relative overflow-hidden snap-start"
                     >
-                        {/* RESİM ALANI - DÜZELTİLDİ */}
+                        {/* RESİM ALANI */}
                         <div className="w-full h-40 rounded-[1.5rem] mb-4 overflow-hidden relative bg-stone-100">
-                             
-                             {/* Resmi kapatan 'absolute bg-stone-50' div'ini kaldırdım. Artık resim görünecek. */}
                              <Image 
-                                src={item.image} 
+                                src={item.image_url || ornekResim} 
                                 alt={item.title} 
                                 fill 
                                 className="object-cover transition-transform duration-700 group-hover:scale-110" 
@@ -171,7 +198,7 @@ export function MenuCTASection() {
                         <div className="px-2 pb-2">
                             <h3 className="text-xl font-bold text-stone-800 mb-1 font-serif">{item.title}</h3>
                             <p className="text-stone-500 text-xs leading-relaxed line-clamp-2">
-                                {item.desc}
+                                {item.description || "Özel tarifimizle hazırlanan lezzet."}
                             </p>
                         </div>
 
@@ -185,7 +212,7 @@ export function MenuCTASection() {
                 ))}
 
                 <div className="min-w-[150px] flex flex-col items-center justify-center snap-start">
-                    <Link href="/menu" className="flex flex-col items-center text-center group">
+                    <Link href="/menu#sinirsiz-menu" className="flex flex-col items-center text-center group">
                         <div className="w-16 h-16 rounded-full bg-white/20 border-2 border-white flex items-center justify-center text-white group-hover:bg-white group-hover:text-[#8AD7D6] group-hover:scale-110 transition-all duration-300 shadow-lg backdrop-blur-sm">
                             <ArrowRight className="w-6 h-6" />
                         </div>
@@ -205,7 +232,7 @@ export function MenuCTASection() {
 
         {/* ANA BUTON */}
         <div className="text-center mt-4">
-            <Link href="/menu">
+            <Link href="/menu#sinirsiz-menu">
                 <Button 
                     variant="secondary"
                     className="group px-8 py-6 text-lg font-bold rounded-full shadow-xl hover:shadow-2xl transition-all"

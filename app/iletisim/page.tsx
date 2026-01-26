@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 import { Header } from "@/components/header"
@@ -15,17 +15,85 @@ import { motion } from "framer-motion"
 
 const accentColor = "#8AD7D6";
 
+// Rastgele matematik sorusu oluştur
+function generateCaptcha() {
+  const num1 = Math.floor(Math.random() * 10) + 1;
+  const num2 = Math.floor(Math.random() * 10) + 1;
+  return { num1, num2, answer: num1 + num2 };
+}
+
 export default function IletisimPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     message: "",
   })
   const [loading, setLoading] = useState(false)
+  const [honeypot, setHoneypot] = useState("") // Bot tuzağı - boş kalmalı
+  const [captcha, setCaptcha] = useState(() => generateCaptcha())
+  const [captchaInput, setCaptchaInput] = useState("")
+  const [workingHoursWeekday, setWorkingHoursWeekday] = useState("08:00 - 22:00")
+  const [workingHoursWeekend, setWorkingHoursWeekend] = useState("08:00 - 23:00")
   const { toast } = useToast()
+
+  // Çalışma saatlerini veritabanından çek
+  useEffect(() => {
+    async function fetchWorkingHours() {
+      try {
+        if (!isSupabaseConfigured) return;
+
+        const { data: weekdayData } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "working_hours_weekday")
+          .single();
+
+        const { data: weekendData } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "working_hours_weekend")
+          .single();
+
+        if (weekdayData) setWorkingHoursWeekday(weekdayData.value);
+        if (weekendData) setWorkingHoursWeekend(weekendData.value);
+      } catch (error) {
+        console.error("Error fetching working hours:", error);
+      }
+    }
+    fetchWorkingHours();
+  }, []);
+
+  // Yeni captcha oluştur
+  const refreshCaptcha = () => {
+    setCaptcha(generateCaptcha());
+    setCaptchaInput("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Bot tuzağı kontrolü - eğer doluysa bot
+    if (honeypot) {
+      console.log("Bot detected via honeypot");
+      toast({
+        title: "Mesaj gönderildi!",
+        description: "Mesajınız başarıyla iletildi.",
+      })
+      return; // Sessizce reddet
+    }
+
+    // Captcha kontrolü
+    if (parseInt(captchaInput) !== captcha.answer) {
+      toast({
+        title: "Hatalı doğrulama",
+        description: "Lütfen matematik sorusunu doğru cevaplayın.",
+        variant: "destructive",
+      })
+      refreshCaptcha();
+      return;
+    }
+
     setLoading(true)
 
     try {
@@ -34,15 +102,26 @@ export default function IletisimPage() {
           title: "Mesaj gönderildi!",
           description: "Mesajınız başarıyla iletildi. (Demo modu - Supabase yapılandırılmamış)",
         })
-        setFormData({ name: "", email: "", message: "" })
+        setFormData({ name: "", email: "", phone: "", message: "" })
+        setCaptchaInput("")
+        refreshCaptcha()
         setLoading(false)
         return
+      }
+
+      // Telefon numarasını WhatsApp formatına çevir (90 ile başlamalı)
+      let whatsappPhone = formData.phone.replace(/\D/g, '');
+      if (whatsappPhone.startsWith('0')) {
+        whatsappPhone = '90' + whatsappPhone.slice(1);
+      } else if (!whatsappPhone.startsWith('90')) {
+        whatsappPhone = '90' + whatsappPhone;
       }
 
       const { error } = await supabase.from("messages").insert([
         {
           name: formData.name,
           email: formData.email,
+          phone: whatsappPhone,
           message: formData.message,
         },
       ])
@@ -54,7 +133,9 @@ export default function IletisimPage() {
         description: "Mesajınız başarıyla iletildi. En kısa sürede size dönüş yapacağız.",
       })
 
-      setFormData({ name: "", email: "", message: "" })
+      setFormData({ name: "", email: "", phone: "", message: "" })
+      setCaptchaInput("")
+      refreshCaptcha()
     } catch (error: any) {
       console.error("Error sending message:", error)
       toast({
@@ -192,7 +273,7 @@ export default function IletisimPage() {
                   İletişim Formu
                 </span>
                 <h2 className="text-3xl font-serif text-white mt-4">Bize Yazın</h2>
-                <p className="text-gray-400 text-sm mt-2">Düşüncelerinizi duymayı çok isteriz.</p>
+                <p className="text-gray-400 text-sm mt-2">Düşüncelerinizi duymayı çok isteriz. 😊</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -228,6 +309,41 @@ export default function IletisimPage() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-xs text-gray-300 uppercase tracking-wider font-semibold">Telefon</Label>
+                  <div className="relative group">
+                    <Input
+                      id="phone"
+                      type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="05XX XXX XX XX"
+                      value={formData.phone}
+                      onChange={(e) => {
+                        // Sadece rakamları al
+                        const numbersOnly = e.target.value.replace(/\D/g, '');
+                        // Maksimum 11 karakter (Türkiye telefon numarası)
+                        const limited = numbersOnly.slice(0, 11);
+                        setFormData({ ...formData, phone: limited });
+                      }}
+                      onKeyDown={(e) => {
+                        // Sadece rakam, backspace, delete, tab, ok tuşlarına izin ver
+                        if (!/[0-9]/.test(e.key) && 
+                            !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key) &&
+                            !e.ctrlKey && !e.metaKey) {
+                          e.preventDefault();
+                        }
+                      }}
+                      required
+                      minLength={10}
+                      maxLength={11}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-white/20 h-12 rounded-xl focus:border-[#8AD7D6] focus:ring-1 focus:ring-[#8AD7D6] transition-all pl-4"
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-[#8AD7D6]/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  </div>
+                  <p className="text-xs text-gray-500">Sadece rakam giriniz (örn: 05321234567)</p>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="message" className="text-xs text-gray-300 uppercase tracking-wider font-semibold">Mesajınız</Label>
                   <div className="relative group">
                     <Textarea
@@ -240,6 +356,55 @@ export default function IletisimPage() {
                       className="bg-white/5 border-white/10 text-white placeholder:text-white/20 resize-none rounded-xl focus:border-[#8AD7D6] focus:ring-1 focus:ring-[#8AD7D6] transition-all p-4"
                     />
                     <div className="absolute inset-0 rounded-xl bg-[#8AD7D6]/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Honeypot - Bot Tuzağı (Gizli Alan) */}
+                <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
+
+                {/* CAPTCHA - Matematik Sorusu */}
+                <div className="space-y-2">
+                  <Label className="text-xs text-gray-300 uppercase tracking-wider font-semibold flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[#8AD7D6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Güvenlik Doğrulaması
+                  </Label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 h-12">
+                      <span className="text-white font-bold text-lg">{captcha.num1}</span>
+                      <span className="text-[#8AD7D6] font-bold">+</span>
+                      <span className="text-white font-bold text-lg">{captcha.num2}</span>
+                      <span className="text-gray-400">=</span>
+                      <Input
+                        type="number"
+                        placeholder="?"
+                        value={captchaInput}
+                        onChange={(e) => setCaptchaInput(e.target.value)}
+                        required
+                        className="bg-transparent border-0 text-white placeholder:text-white/30 h-10 w-16 text-center text-lg font-bold focus:ring-0 p-0"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={refreshCaptcha}
+                      className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-[#8AD7D6] hover:border-[#8AD7D6]/50 transition-all"
+                      title="Yeni soru"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M23 4v6h-6M1 20v-6h6"/>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                      </svg>
+                    </button>
                   </div>
                 </div>
 
@@ -322,11 +487,11 @@ export default function IletisimPage() {
             <div className="relative z-10 space-y-3 mb-8 bg-black/20 p-4 rounded-xl border border-white/5">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Hafta İçi</span>
-                <span className="text-white font-medium bg-[#8AD7D6]/10 px-2 py-0.5 rounded textxs">08:00 - 22:00</span>
+                <span className="text-white font-medium bg-[#8AD7D6]/10 px-2 py-0.5 rounded textxs">{workingHoursWeekday}</span>
               </div>
               <div className="flex justify-between items-center text-sm border-t border-white/5 pt-2">
                 <span className="text-gray-400">Hafta Sonu</span>
-                <span className="text-white font-medium bg-[#8AD7D6]/10 px-2 py-0.5 rounded textxs">08:00 - 23:00</span>
+                <span className="text-white font-medium bg-[#8AD7D6]/10 px-2 py-0.5 rounded textxs">{workingHoursWeekend}</span>
               </div>
             </div>
 

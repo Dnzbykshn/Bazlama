@@ -279,10 +279,11 @@ export function Section2() {
           setMenu(menuData)
           const { data: itemsData } = await supabase.from("unlimited_menu_items").select("*").eq("menu_id", menuData.id).order("position", { ascending: true })
           
-          const categories = ["Sıcaklar", "Kahvaltılık", "Zeytinyağlı", "Hamur İşi", "Tatlı", "İçecek"];
+          // Kategori veritabanından geliyorsa onu kullan, yoksa varsayılan ata
+          const defaultCategories = ["Sıcaklar", "Kahvaltılık", "Zeytinyağlı", "Hamur İşi", "Tatlı", "İçecek"];
           const enhancedItems = (itemsData || []).map((item, index) => ({
              ...item,
-             category: categories[index % categories.length] 
+             category: item.category || defaultCategories[index % defaultCategories.length] 
           })) as UnlimitedMenuItem[]
           
           setMenuItems(enhancedItems)
@@ -296,7 +297,7 @@ export function Section2() {
   const isAllVisible = visibleCount >= menuItems.length;
 
   return (
-    <section className="relative py-24 px-4 overflow-hidden" ref={gridRef} 
+    <section id="sinirsiz-menu" className="relative py-24 px-4 overflow-hidden" ref={gridRef} 
         style={{ background: 'radial-gradient(circle at center top, #fffcf8, #fff)' }}
     >
         {/* Çok hafif nokta dokusu */}
@@ -329,7 +330,7 @@ export function Section2() {
                 
                 <div className="relative py-4">
                     <h2 className={`text-6xl md:text-8xl font-bold text-slate-800 px-6 pb-4 drop-shadow-sm ${playfair.className}`}>
-                        Sınırsız Lezzet İçeriği
+                        {menu?.title || "Sınırsız Lezzet İçeriği"}
                     </h2>
                     <div className="flex justify-center mt-2 opacity-60 text-[#8AD7D6]">
                         <svg width="250" height="20" viewBox="0 0 200 15" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 interface Hotspot {
   id: string;
@@ -37,12 +39,18 @@ const reviews = [
   },
 ];
 
-const sliderMenu = [
-  { id: 1, title: "Atom", price: "₺120", img: "/DSC07011.jpg", badge: "Şefin Seçimi", rating: 5 },
-  { id: 2, title: "Sıcak Pişi", price: "₺90", img: "/DSC07011.jpg", badge: "En Popüler", rating: 5 },
-  { id: 3, title: "Menemen", price: "₺140", img: "/DSC07011.jpg", badge: "Acılı", rating: 4 },
-  { id: 4, title: "Sucuklu Yumurta", price: "₺160", img: "/DSC07011.jpg", badge: "Kasap Sucuk", rating: 5 },
+// Fallback slider verileri (Supabase bağlantısı yoksa)
+const fallbackSliderImages = [
+  { id: "1", title: "Mekan", image_url: "/DSC07011.jpg" },
+  { id: "2", title: "Kahvaltı", image_url: "/DSC04385.jpg" },
+  { id: "3", title: "Atmosfer", image_url: "/Szutest-5.jpg" },
 ];
+
+interface FeaturedItem {
+  id: string;
+  title: string;
+  image_url: string | null;
+}
 
 const hotspots: Hotspot[] = [
   { id: "1", x: 65, y: 55, title: "El Açması Gözleme", description: "Otlu & Peynirli" },
@@ -57,14 +65,98 @@ export function HeroSection() {
   const [hoveredHotspot, setHoveredHotspot] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentReview, setCurrentReview] = useState(0);
+  const [featuredItems, setFeaturedItems] = useState<FeaturedItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [googleRating, setGoogleRating] = useState(5.0);
+  const [googleReviewCount, setGoogleReviewCount] = useState("120+");
+
+  // Google puanlamasını veritabanından çek
+  useEffect(() => {
+    async function fetchRating() {
+      try {
+        if (!isSupabaseConfigured) return;
+        
+        const { data: ratingData } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "google_rating")
+          .single();
+        
+        const { data: countData } = await supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "google_review_count")
+          .single();
+        
+        if (ratingData) setGoogleRating(parseFloat(ratingData.value) || 5.0);
+        if (countData) setGoogleReviewCount(countData.value);
+      } catch (error) {
+        console.error("Error fetching rating:", error);
+      }
+    }
+    fetchRating();
+  }, []);
+
+  // Öne çıkan menü öğelerini veritabanından çek
+  useEffect(() => {
+    async function fetchFeaturedItems() {
+      try {
+        if (!isSupabaseConfigured) {
+          setFeaturedItems(fallbackSliderImages.map(item => ({ ...item, image_url: item.image_url })));
+          setIsLoading(false);
+          return;
+        }
+        
+        // First get the active menu
+        const { data: menuData } = await supabase
+          .from("unlimited_menu")
+          .select("id")
+          .eq("active", true)
+          .limit(1)
+          .single();
+
+        if (menuData) {
+          // Then get featured items from that menu
+          const { data: itemsData } = await supabase
+            .from("unlimited_menu_items")
+            .select("id, title, image_url")
+            .eq("menu_id", menuData.id)
+            .eq("featured", true)
+            .order("position", { ascending: true })
+            .limit(6);
+          
+          if (itemsData && itemsData.length > 0) {
+            // Filter out items without images
+            const itemsWithImages = itemsData.filter(item => item.image_url);
+            if (itemsWithImages.length > 0) {
+              setFeaturedItems(itemsWithImages);
+            } else {
+              setFeaturedItems(fallbackSliderImages.map(item => ({ ...item, image_url: item.image_url })));
+            }
+          } else {
+            setFeaturedItems(fallbackSliderImages.map(item => ({ ...item, image_url: item.image_url })));
+          }
+        } else {
+          setFeaturedItems(fallbackSliderImages.map(item => ({ ...item, image_url: item.image_url })));
+        }
+      } catch (error) {
+        console.error("Error fetching featured items:", error);
+        setFeaturedItems(fallbackSliderImages.map(item => ({ ...item, image_url: item.image_url })));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchFeaturedItems();
+  }, []);
 
   // Slider Otomatik Döngü
   useEffect(() => {
+    if (featuredItems.length === 0) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % sliderMenu.length);
+      setCurrentSlide((prev) => (prev + 1) % featuredItems.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [featuredItems.length]);
 
   // Yorumlar Otomatik Döngü
   useEffect(() => {
@@ -75,11 +167,13 @@ export function HeroSection() {
   }, []);
 
   const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % sliderMenu.length);
+    if (featuredItems.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % featuredItems.length);
   };
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + sliderMenu.length) % sliderMenu.length);
+    if (featuredItems.length === 0) return;
+    setCurrentSlide((prev) => (prev - 1 + featuredItems.length) % featuredItems.length);
   };
 
   const handleScrollDown = () => {
@@ -131,20 +225,20 @@ export function HeroSection() {
               unutulmaz bir kahvaltı deneyimi.
             </p>
             <div className="flex flex-col sm:flex-row gap-5">
-              <button 
+              <Link 
+                href="/iletisim"
                 className="px-10 py-4 text-white font-bold rounded-full transition-all shadow-lg hover:scale-105 hover:-translate-y-1" 
                 style={{ backgroundColor: accentColor, boxShadow: `0 0 25px ${accentColor}66` }}
               >
                 Rezervasyon Yap
-              </button>
-              <button 
+              </Link>
+              <Link 
+                href="/menu#sinirsiz-menu"
                 className="px-10 py-4 bg-transparent text-white font-medium rounded-full border-2 transition-all hover:bg-white/10 backdrop-blur-sm" 
-                style={{ borderColor: accentColor, color: "white" }} 
-                onMouseEnter={(e) => {e.currentTarget.style.borderColor = accentColor; e.currentTarget.style.backgroundColor = `${accentColor}20`}} 
-                onMouseLeave={(e) => {e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.backgroundColor = "transparent"}}
+                style={{ borderColor: accentColor, color: "white" }}
               >
                 Menüyü İncele
-              </button>
+              </Link>
             </div>
           </motion.div>
         </div>
@@ -172,6 +266,7 @@ export function HeroSection() {
                 </div>
             </div>
 
+            {featuredItems.length > 0 && !isLoading && (
             <div className="relative w-64 h-80 rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-[#022c22]/40 backdrop-blur-md group">
                 <AnimatePresence mode="wait">
                     <motion.div
@@ -183,8 +278,8 @@ export function HeroSection() {
                         className="absolute inset-0"
                     >
                         <Image
-                            src={sliderMenu[currentSlide].img}
-                            alt={sliderMenu[currentSlide].title}
+                            src={featuredItems[currentSlide]?.image_url || "/DSC07011.jpg"}
+                            alt={featuredItems[currentSlide]?.title || "Öne Çıkan"}
                             fill
                             className="object-cover"
                         />
@@ -200,25 +295,12 @@ export function HeroSection() {
                             animate={{ opacity: 1, y: 0 }}
                             className="text-[10px] font-bold text-white uppercase tracking-wider"
                         >
-                            {sliderMenu[currentSlide].badge}
+                            {featuredItems[currentSlide]?.title || "Öne Çıkan"}
                         </motion.span>
                     </div>
 
                     <div>
-                        <div className="flex gap-1 mb-2">
-                            {[...Array(5)].map((_, i) => (
-                                <svg key={i} xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill={i < sliderMenu[currentSlide].rating ? "#F59E0B" : "none"} stroke={i < sliderMenu[currentSlide].rating ? "none" : "#ffffff50"} className="text-amber-400"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                            ))}
-                        </div>
-                        <motion.h3 
-                            key={currentSlide + "title"}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="text-white font-serif text-2xl leading-tight mb-1"
-                        >
-                            {sliderMenu[currentSlide].title}
-                        </motion.h3>
-                        <p className="font-bold text-lg" style={{ color: accentColor }}></p>
+                        <p className="text-xs text-white/70">{currentSlide + 1} / {featuredItems.length}</p>
                     </div>
                 </div>
                 
@@ -231,6 +313,42 @@ export function HeroSection() {
                     style={{ backgroundColor: accentColor }}
                 />
             </div>
+            )}
+
+            {/* 5 Yıldız Değerlendirme - Google Maps'e Link */}
+            <a 
+                href="https://maps.app.goo.gl/tEy2nFmFFXbxBY6R9" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 mt-3 hover:opacity-80 transition-opacity cursor-pointer group"
+            >
+                <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((star) => {
+                        const rawFill = Math.min(Math.max(googleRating - (star - 1), 0), 1);
+                        // Kısmi dolulukları daha görünür yapmak için kare kök ölçeklendirme
+                        // 0.3 → 55%, 0.5 → 71%, 0.7 → 84%
+                        const fillPercentage = (rawFill > 0 && rawFill < 1) 
+                            ? Math.sqrt(rawFill) * 100 
+                            : rawFill * 100;
+                        return (
+                            <div key={star} className="relative w-4 h-4 group-hover:scale-110 transition-transform">
+                                {/* Boş yıldız (arka plan) */}
+                                <svg className="w-4 h-4 text-white/30" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                {/* Dolu yıldız (orantılı) */}
+                                <div className="absolute inset-0 overflow-hidden" style={{ width: `${fillPercentage}%` }}>
+                                    <svg className="w-4 h-4" fill="#FFD700" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                <span className="text-xs text-white/70 font-medium">{googleRating.toFixed(1)}</span>
+                <span className="text-xs text-white/50 group-hover:text-white/70 transition-colors">• {googleReviewCount} yorum →</span>
+            </a>
         </div>
        
       </div>

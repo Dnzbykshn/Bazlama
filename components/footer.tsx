@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Facebook, Instagram, Twitter, Phone, MapPin, ArrowUp, Coffee, Wheat, Utensils } from "lucide-react"
 import { motion, Variants } from "framer-motion"
 
@@ -65,9 +66,14 @@ export function Footer() {
             {/* 1. KOLON: MARKA & HAKKINDA */}
             <div className="lg:col-span-4 space-y-8">
               <Link href="/" className="flex items-center gap-4 group">
-                {/* Logo Kutusu */}
-                <div className="relative w-16 h-16 bg-[#8AD7D6]/10 rounded-2xl border border-[#8AD7D6]/20 p-3 flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:bg-[#8AD7D6] group-hover:text-[#081e1e] transition-all duration-500">
-                   <span className="text-3xl transition-transform group-hover:scale-110">🥞</span>
+                {/* Logo */}
+                <div className="relative w-14 h-14 group-hover:scale-105 transition-transform duration-300">
+                  <Image
+                    src="/pisikahvalti-logo.png"
+                    alt="Pişi Kahvaltı Logo"
+                    fill
+                    className="object-contain"
+                  />
                 </div>
                 <div>
                   <span className="text-3xl font-serif font-bold text-white tracking-wide block">Pişi Kahvaltı</span>

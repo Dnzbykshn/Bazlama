@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronRight, ChevronLeft, Star, ChefHat, Coffee, Wheat } from "lucide-react"
 import Image from "next/image"
 import { Caveat, Inter, Playfair_Display } from "next/font/google"
+import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 
 // Fontlar
 const caveat = Caveat({ subsets: ["latin"], weight: ["700"] })
@@ -17,14 +18,21 @@ const inter = Inter({ subsets: ["latin"] })
 const accentColor = "#8AD7D6";
 const ornekResim = "/DSC04385.jpg";
 
-// MENÜ VERİLERİ
-const menuItems = [
-  { id: 1, title: "Sınırsız Serpme", desc: "Sıcak pişiler, 4 çeşit peynir ve sınırsız çay.", price: "₺₺₺", image: ornekResim },
-  { id: 2, title: "Atom Pişi", desc: "Çikolatalı ve peynir dolgulu lezzet bombası.", price: "₺₺", image: ornekResim },
-  { id: 3, title: "Köy Menemeni", desc: "Bakır sahanda, organik domates ve biberle.", price: "₺₺", image: ornekResim },
-  { id: 4, title: "Sucuklu Yumurta", desc: "Kasap sucuğu ve köy yumurtası.", price: "₺₺", image: ornekResim },
-  { id: 5, title: "Mıhlama", desc: "Trabzon peyniri ve tereyağı ile.", price: "₺₺₺", image: ornekResim },
-  { id: 6, title: "Gözleme Çeşitleri", desc: "El açması, odun ateşinde pişmiş.", price: "₺₺", image: ornekResim }
+interface MenuItem {
+  id: string
+  title: string
+  description: string | null
+  image_url: string | null
+}
+
+// Fallback menü verileri (Supabase bağlantısı yoksa)
+const fallbackMenuItems = [
+  { id: "1", title: "Sınırsız Serpme", description: "Sıcak pişiler, 4 çeşit peynir ve sınırsız çay.", image_url: ornekResim },
+  { id: "2", title: "Atom Pişi", description: "Çikolatalı ve peynir dolgulu lezzet bombası.", image_url: ornekResim },
+  { id: "3", title: "Köy Menemeni", description: "Bakır sahanda, organik domates ve biberle.", image_url: ornekResim },
+  { id: "4", title: "Sucuklu Yumurta", description: "Kasap sucuğu ve köy yumurtası.", image_url: ornekResim },
+  { id: "5", title: "Mıhlama", description: "Trabzon peyniri ve tereyağı ile.", image_url: ornekResim },
+  { id: "6", title: "Gözleme Çeşitleri", description: "El açması, odun ateşinde pişmiş.", image_url: ornekResim }
 ];
 
 // Animasyonlar
@@ -48,6 +56,52 @@ const cardVariants = {
 export function MenuPageCTASection() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Veritabanından menü öğelerini çek
+  useEffect(() => {
+    async function fetchMenuItems() {
+      try {
+        if (!isSupabaseConfigured) {
+          setMenuItems(fallbackMenuItems)
+          setIsLoading(false)
+          return
+        }
+        
+        const { data: menuData } = await supabase
+          .from("unlimited_menu")
+          .select("*")
+          .eq("active", true)
+          .limit(1)
+          .single()
+        
+        if (menuData) {
+          const { data: itemsData } = await supabase
+            .from("unlimited_menu_items")
+            .select("*")
+            .eq("menu_id", menuData.id)
+            .eq("featured", true)
+            .order("position", { ascending: true })
+            .limit(6)
+          
+          if (itemsData && itemsData.length > 0) {
+            setMenuItems(itemsData)
+          } else {
+            setMenuItems(fallbackMenuItems)
+          }
+        } else {
+          setMenuItems(fallbackMenuItems)
+        }
+      } catch (error) {
+        console.error("Error fetching menu items:", error)
+        setMenuItems(fallbackMenuItems)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchMenuItems()
+  }, [])
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -67,10 +121,15 @@ export function MenuPageCTASection() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isPaused) scroll('right');
+      if (!isPaused && !isLoading) scroll('right');
     }, 4500); 
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, isLoading]);
+
+  // Yükleme sırasında section'ı gizle
+  if (isLoading || menuItems.length === 0) {
+    return null;
+  }
 
   return (
     // DÜZELTME: Rengi garantiye almak için 'style' prop'u ile standart CSS Gradient verdik.
@@ -198,7 +257,7 @@ export function MenuPageCTASection() {
                         {/* Resim Alanı */}
                         <div className="w-full h-56 md:h-72 rounded-[2rem] mb-6 overflow-hidden relative shadow-md">
                              <Image 
-                                src={item.image} 
+                                src={item.image_url || ornekResim} 
                                 alt={item.title} 
                                 fill 
                                 className="object-cover transition-transform duration-700 group-hover:scale-110" 
@@ -209,15 +268,16 @@ export function MenuPageCTASection() {
                                 {item.title}
                              </div>
 
-                             {/* <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-bold text-stone-800 shadow-lg z-10 flex items-center gap-1">
-                                {item.price}
-                             </div>  commit*/}
+                             <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-bold text-[#8AD7D6] shadow-lg z-10 flex items-center gap-1">
+                                <Star className="w-3 h-3 fill-current" />
+                                Özel
+                             </div>
                         </div>
 
                         {/* İçerik */}
                         <div className="px-3 pb-2 flex-grow flex flex-col">
                             <p className="text-stone-500 text-sm md:text-base leading-relaxed font-medium mb-4 line-clamp-2">
-                                {item.desc}
+                                {item.description || "Özel tarifimizle hazırlanan lezzet."}
                             </p>
                             
                             <div className="mt-auto flex justify-between items-center border-t border-stone-100 pt-4">
@@ -262,18 +322,22 @@ export function MenuPageCTASection() {
 
         {/* --- ANA BUTON --- */}
         <div className="text-center mt-16 relative z-30">
-            <Link href="/menu">
-                <Button 
-                    variant="secondary"
-                    className="group relative px-14 py-9 text-xl font-bold rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.4)] transition-all duration-300 hover:-translate-y-1 bg-white text-[#8AD7D6] overflow-hidden"
-                >
-                    <span className="relative z-10 flex items-center gap-3">
-                        Tüm Menüyü Keşfet
-                        <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                    <div className="absolute inset-0 bg-stone-50 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500 ease-out -z-0" />
-                </Button>
-            </Link>
+            <Button 
+                variant="secondary"
+                onClick={() => {
+                    const element = document.getElementById('sinirsiz-menu');
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }}
+                className="group relative px-14 py-9 text-xl font-bold rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.4)] transition-all duration-300 hover:-translate-y-1 bg-white text-[#8AD7D6] overflow-hidden cursor-pointer"
+            >
+                <span className="relative z-10 flex items-center gap-3">
+                    Tüm Menüyü Keşfet
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-stone-50 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500 ease-out -z-0" />
+            </Button>
         </div>
 
       </div>

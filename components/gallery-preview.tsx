@@ -6,23 +6,53 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Instagram, ArrowRight, Camera } from "lucide-react"
+import { supabase, isSupabaseConfigured } from "@/lib/supabase"
 
 // Marka Rengi
 const accentColor = "#8AD7D6";
 
-// Örnek Resimler (Supabase boşsa bunlar döner)
+// Fallback resimler (Supabase boşsa bunlar döner)
 const PLACEHOLDER_IMAGES = [
-    "DSC04385.jpg",
-  "DSC04385.jpg",
-  "DSC04385.jpg",
-  "DSC04385.jpg",
-
-  "DSC04385.jpg",
+  "/DSC04385.jpg",
+  "/DSC07011.jpg",
+  "/Szutest-5.jpg",
+  "/DSC04385.jpg",
+  "/DSC07011.jpg",
 ];
 
+interface GalleryImage {
+  id: string;
+  image_url: string;
+  title: string | null;
+}
+
 export function GalleryPreview() {
+  const [galleryImages, setGalleryImages] = useState<string[]>(PLACEHOLDER_IMAGES);
+
+  // Galeri resimlerini veritabanından çek
+  useEffect(() => {
+    async function fetchGalleryImages() {
+      try {
+        if (!isSupabaseConfigured) return;
+        
+        const { data } = await supabase
+          .from("gallery")
+          .select("id, image_url, title")
+          .order("position", { ascending: true });
+        
+        if (data && data.length > 0) {
+          const images = data.map((item: GalleryImage) => item.image_url);
+          setGalleryImages(images);
+        }
+      } catch (error) {
+        console.error("Error fetching gallery images:", error);
+      }
+    }
+    fetchGalleryImages();
+  }, []);
+
   // Sonsuz döngü için resim listesini 3 kez çoğaltıyoruz
-  const marqueeImages = [...PLACEHOLDER_IMAGES, ...PLACEHOLDER_IMAGES, ...PLACEHOLDER_IMAGES];
+  const marqueeImages = [...galleryImages, ...galleryImages, ...galleryImages];
 
   return (
     <section className="py-24 bg-white relative overflow-hidden flex flex-col items-center justify-center">
