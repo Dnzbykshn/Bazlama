@@ -50,7 +50,7 @@ export function Header() {
         relative /* Ortalamak için gerekli */
         ${scrolled ? 'bg-teal-50/95 shadow-xl shadow-teal-900/15' : ''}
       `}>
-        
+
         {/* --- SOL KISIM: LOGO İKONU --- */}
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-all duration-300 group z-20">
           <div className="relative w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center p-2 group-hover:scale-110 transition-transform overflow-hidden">
@@ -73,9 +73,9 @@ export function Header() {
         {/* lg:hidden -> Sadece mobilde görünür. Absolute center -> Tam ortadadır. */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:hidden z-10">
           <Link href="/" className="font-serif text-lg font-bold text-teal-900 tracking-wide whitespace-nowrap">
-             Pişi Kahvaltı
+            Pişi Kahvaltı
           </Link>
-          
+
           {/* ALTERNATİF: Eğer "ALAÇATI" yazmak istersen üstteki Link'i silip bunu açabilirsin:
           <span className="text-[10px] font-bold tracking-[0.3em] text-teal-600 uppercase">
              ALAÇATI
@@ -84,7 +84,7 @@ export function Header() {
         </div>
 
         {/* --- ORTA KISIM: NAVİGASYON (MASAÜSTÜ) --- */}
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-1 relative z-20">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -141,22 +141,8 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
-               
-                
-                  <Link
-                    href="/bizi-taniyin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all"
-                  >
-                    Bizi Tanıyın
-                  </Link>
-                  <Link
-                    href="/bizi-taniyin/franchise"
-                    onClick={() => setMobileMenuOpen(false)} 
-                    className="text-lg font-medium text-stone-600 hover:text-primary hover:bg-stone-50 px-4 py-3 rounded-2xl transition-all pl-8"
-                  >
-                    Franchise Başvuru
-                  </Link>
+
+
                   <Link
                     href="https://wa.me/905402714040"
                     target="_blank"
